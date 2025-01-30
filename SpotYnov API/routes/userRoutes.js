@@ -10,3 +10,7 @@ const router = express.Router();
 // router.delete("/users/:userId", ...);
 
 // router.put("/users/:userId/personality", ...);
+
+// router.post("/users/:userId/playlists/from-top-tracks", ...);
+
+module.exports = router;

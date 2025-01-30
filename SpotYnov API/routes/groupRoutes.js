@@ -14,3 +14,5 @@ const router = express.Router();
 // router.delete("/groups/:groupId/members", ...);
 
 // router.get("/groups/:groupId/synchronize", ...);
+
+module.exports = router;

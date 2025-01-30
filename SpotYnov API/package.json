@@ -1,7 +1,7 @@
 {
   "name": "spotynov-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,6 +16,7 @@
     "express-rate-limit": "^7.5.0",
     "logger": "^0.0.1",
     "node-cache": "^5.1.2",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.17.0"
   }
 }
