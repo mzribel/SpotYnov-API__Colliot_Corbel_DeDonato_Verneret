@@ -1,15 +1,12 @@
-const { createLogger, format, transports } = require('winston');
-
-const logger = createLogger({
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const winston_1 = require("winston");
+const logger = (0, winston_1.createLogger)({
     level: 'info',
-    format: format.combine(
-        format.timestamp(),
-        format.json()
-    ),
+    format: winston_1.format.combine(winston_1.format.timestamp(), winston_1.format.json()),
     transports: [
-        new transports.File({ filename: 'logs/app.log' }),
-        new transports.Console()
+        new winston_1.transports.File({ filename: 'logs/app.log' }),
+        new winston_1.transports.Console()
     ]
 });
-
-module.exports = logger;
+exports.default = logger;

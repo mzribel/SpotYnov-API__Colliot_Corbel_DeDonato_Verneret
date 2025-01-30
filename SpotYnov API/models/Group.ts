@@ -1,10 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class Group {
-    constructor(name, members) {
+    private name: string;
+    private members: string[]
+
+    constructor(name:string, members:string[]) {
         // TODO: Propriétés et méthodes à définir
         this.name = name;
         this.members = members;
     }
 }
-exports.default = Group;
+
+export default Group;

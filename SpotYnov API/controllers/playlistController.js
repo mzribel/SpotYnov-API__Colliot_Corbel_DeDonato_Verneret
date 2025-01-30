@@ -1,4 +1,4 @@
-const log = require('../logger');
-const {getSuccessResponse, getErrorResponse} = require("../services/api/responseService");
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // TODO: Importer les fonctions de playlistService
-// const { ... } = require('../services/playlistService');
+// import { ... } from '../services/playlistService';
