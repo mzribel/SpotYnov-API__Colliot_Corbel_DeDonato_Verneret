@@ -1,9 +1,8 @@
 import express from 'express';
 const router = express.Router();
-// TODO: Importer les fonctions de spotifyAuthController
-// import { ... } '../controllers/spotifyAuthController';
+import {getAuthCodeUrl, handleAuthCodeCallback} from "../controllers/spotifyAuthController";
 
-// router.get("/auth", ...);
-// router.get("/callback", ...);
+router.get("/auth", getAuthCodeUrl);
+router.get("/callback", handleAuthCodeCallback);
 
 export default router;
