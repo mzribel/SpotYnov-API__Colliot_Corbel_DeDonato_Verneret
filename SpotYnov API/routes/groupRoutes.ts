@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 // TODO: Importer les fonctions de groupController
-// const { ... } = require('../controllers/groupController');
+// import { ... } from '../controllers/groupController';
 
 // router.get("/groups", ...);
 // router.post("/groups", ...);
@@ -15,4 +15,4 @@ const router = express.Router();
 
 // router.get("/groups/:groupId/synchronize", ...);
 
-module.exports = router;
+export default router;

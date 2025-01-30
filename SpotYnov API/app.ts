@@ -1,10 +1,10 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./docs/swagger.json');
-const {getErrorResponse} = require("./services/api/responseService");
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './docs/swagger.json';
+import {getErrorResponse} from "./services/api/responseService";
 require('dotenv').config();
 
 const app = express();
@@ -22,10 +22,10 @@ app.use(apiLimiter);
 app.use(bodyParser.json());
 
 // ROUTES
-const authRoutes = require('./routes/authRoutes');
-const spotifyAuthRoutes = require('./routes/spotifyAuthRoutes');
-const userRoutes = require('./routes/userRoutes');
-const groupRoutes = require('./routes/groupRoutes');
+import authRoutes from './routes/authRoutes';
+import spotifyAuthRoutes from './routes/spotifyAuthRoutes';
+import userRoutes from './routes/userRoutes';
+import groupRoutes from './routes/groupRoutes';
 
 app.use('/', authRoutes);
 app.use('/spotify', spotifyAuthRoutes);
@@ -40,4 +40,4 @@ app.use((req, res) => {
     getErrorResponse(res, 404, "URL does not exist")
 })
 
-module.exports = app;
+export default app;

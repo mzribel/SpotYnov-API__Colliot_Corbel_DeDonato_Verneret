@@ -1,8 +1,10 @@
-const getSuccessResponse = (res, data, code=200) => {
+import { Response } from "express";
+
+export const getSuccessResponse = (res:Response, data:any, code=200) => {
     return res.status(code).json({data: data});
 };
 
-const getErrorResponse = (res, code, message) => {
+export const getErrorResponse = (res:Response, code:number, message:string) => {
     let responseObj = {
         error: {
             code: code,
@@ -11,5 +13,3 @@ const getErrorResponse = (res, code, message) => {
     }
     return res.status(code).json(responseObj);
 }
-
-module.exports = { getSuccessResponse, getErrorResponse };

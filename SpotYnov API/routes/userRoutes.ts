@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 // TODO: Importer les fonctions de userController
 // const { ... } = require('../controllers/userController');
@@ -13,4 +13,4 @@ const router = express.Router();
 
 // router.post("/users/:userId/playlists/from-top-tracks", ...);
 
-module.exports = router;
+export default router
