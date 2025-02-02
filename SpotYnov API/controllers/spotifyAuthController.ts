@@ -23,7 +23,6 @@ export const handleAuthCodeCallback = async (req:Request, res:Response) => {
     } catch (err) {
         const error = err as Error;     // Typescript...
         log.error('Error while exchanging authorization code for token', error.message || error);
-        console.log(error)
         getErrorResponse(res, 500, error.message);
     }
 };
