@@ -13,10 +13,6 @@ const USER_SCOPE:string[] = [
     "playlist-modify-private"       // Créer/modifier des playlists privées
 ]
 
-/**
- * Génère une URL pour le flux Authorization Code Grant.
- * @returns {string} URL d'autorisation.
- */
 export const getAuthorizationCodeUrl = ():string => {
     const params = new URLSearchParams({
         response_type: 'code', // Authorization Code Grant
@@ -27,11 +23,6 @@ export const getAuthorizationCodeUrl = ():string => {
     return `${SPOTIFY_AUTH_URL}?${params.toString()}`;
 };
 
-/**
- * Échange un code d'autorisation pour obtenir un token Spotify.
- * @param {string} code - Code d'autorisation reçu.
- * @returns {Promise<object>} Données du token.
- */
 export const exchangeAuthorizationCode = async (code: string): Promise<object> => {
     const params =  new URLSearchParams({
         grant_type: "authorization_code",

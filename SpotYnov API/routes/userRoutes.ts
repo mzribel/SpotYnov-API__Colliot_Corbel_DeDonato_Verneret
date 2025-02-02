@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import {getUserTopTracks} from '../controllers/userController';
+import { getUserTopTracks } from '../controllers/userController';
 import { authHandler } from "../middlewares/authHandler";
 
 // router.post("/users", ...);

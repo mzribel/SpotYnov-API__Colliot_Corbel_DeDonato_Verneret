@@ -1,8 +1,8 @@
-import {readUsersDataFromFile, writeUserDataToFile} from "../utils/file";
+import { readUsersDataFromFile, writeUserDataToFile } from "../utils/file";
 import User from "../models/User";
-import {UserData} from "../models/UserData";
-import {hashPassword, isPasswordValid, isUsernameValid} from "../utils/format";
-import {ApiError} from "../middlewares/errorHandler";
+import { UserData } from "../models/UserData";
+import { hashPassword, isPasswordValid, isUsernameValid } from "../utils/format";
+import { ApiError } from "../middlewares/errorHandler";
 
 export const userExists = (username:string, userData:UserData|null=null):boolean => {
     if (!userData) {

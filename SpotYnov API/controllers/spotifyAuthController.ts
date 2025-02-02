@@ -1,10 +1,10 @@
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 import log from '../logger';
-import {getAuthorizationCodeUrl, exchangeAuthorizationCode} from '../services/spotify/spotifyAuthService';
-import {getSuccessResponse, getErrorResponse} from "../services/api/responseService";
+import { getAuthorizationCodeUrl, exchangeAuthorizationCode } from '../services/spotify/spotifyAuthService';
+import { getSuccessResponse, getErrorResponse } from "../services/api/responseService";
 import { saveUserToFile} from "../services/userService";
-import {ApiError} from "../middlewares/errorHandler";
-import axios, {AxiosResponse} from "axios";
+import { ApiError } from "../middlewares/errorHandler";
+import axios, { AxiosResponse } from "axios";
 
 export const getAuthCodeUrl = (req:Request, res:Response):void => {
     const auth_url:string = getAuthorizationCodeUrl()

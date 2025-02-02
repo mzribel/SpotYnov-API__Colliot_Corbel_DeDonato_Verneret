@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import { getAuthCodeUrl, handleAuthCodeCallback, linkSpotifyAccount, unlinkSpotifyAccount } from "../controllers/spotifyAuthController";
-import { authHandler} from "../middlewares/authHandler";
+import { authHandler } from "../middlewares/authHandler";
 
 router.get("/auth", authHandler, getAuthCodeUrl);
 router.get("/callback", handleAuthCodeCallback);
