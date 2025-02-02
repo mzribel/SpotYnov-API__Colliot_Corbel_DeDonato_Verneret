@@ -1,4 +1,18 @@
 {
-    "users": [],
-    "groups": []
+  "auto_increment": 2,
+  "users": {
+    "1": {
+      "username": "RathGate",
+      "password": "3714155e06883da2b4777c1fbb46443986b3fd6159306769fc205d355711528c",
+      "id": 1,
+      "spotifyId": "t67hnp9fzf00ue7hzgh44a31c",
+      "spotifyToken": {
+        "access_token": "BQBHxLxxhviuoBH7jzwWrboMf0JvDBbh1ODWcj_F5ZHA5ljd_eTH4li9hc9q5x75tKLiNBZM78WD4Hb_ArM52YY2v9UzIML5mSG4qgcjCXpfpU3zEhZ6eRRBpepiTMi1HseIJZQrPLhgBa0eUR1AfI6w4izoqn5wBO46PgWZXgd-611EpvP_4yya6DwkFl20T6UosJb_GGgfvkcXewFiGKjxvBphlOO6wFwaB0-hURomTjIdxggKA1KXEZ9m_56AIqEJaj-qrFDgZ3RksY5_NS2aKjq3yw5-ciaLtoTolVyn69YF9Xw9en_WoQ",
+        "token_type": "Bearer",
+        "expires_in": 3600,
+        "refresh_token": "AQD-VwYvAxAhVxghOEXYqVGn-eTH74B_pK3g8E-pvsXi7-seDhrTsI0CCr1gxlKa7VqMLGeU0h15lFogFYqLt6yJuFNY9oyZ0PDH1U5PQ5umsxuO8yKqsaRGfC0ghuxZ5sg",
+        "scope": "user-modify-playback-state user-library-read playlist-modify-private playlist-modify-public user-read-playback-state user-top-read"
+      }
+    }
+  }
 }
