@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './docs/swagger.json';
 import {getErrorResponse} from "./services/api/responseService";
+
 require('dotenv').config();
 
 const app = express();
@@ -18,7 +19,6 @@ const apiLimiter = rateLimit({
 
 app.use(cors());
 app.use(apiLimiter);
-
 app.use(bodyParser.json());
 
 // ROUTES
@@ -26,6 +26,7 @@ import authRoutes from './routes/authRoutes';
 import spotifyAuthRoutes from './routes/spotifyAuthRoutes';
 import userRoutes from './routes/userRoutes';
 import groupRoutes from './routes/groupRoutes';
+import {apiErrorHandler, ApiError} from "./middlewares/errorHandler";
 
 app.use('/', authRoutes);
 app.use('/spotify', spotifyAuthRoutes);
@@ -37,7 +38,8 @@ app.use('/documentation', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // 404
 app.use((req, res) => {
-    getErrorResponse(res, 404, "URL does not exist")
+    throw new ApiError(404, "Not Found");
 })
-
+// @ts-ignore
+app.use(apiErrorHandler)
 export default app;

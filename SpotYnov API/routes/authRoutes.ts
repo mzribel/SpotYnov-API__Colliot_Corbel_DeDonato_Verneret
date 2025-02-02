@@ -1,22 +1,9 @@
-import express, { Request, Response } from 'express';
-import { authenticateToken } from '../middlewares/authentication'
-import { generateAccessToken } from "../utils/authentication";
+import express from 'express';
+import {loginUser, registerUser} from "../controllers/authController";
 
 const router = express.Router();
-// TODO: Importer les fonctions de authController
-// import { ... } from '../controllers/authController';
 
-router.get("/get_token", (req:Request, res:Response):void=> {
-    res.send(generateAccessToken("RathGate"))
-})
-router.get("/check_token", authenticateToken, (req:Request, res:Response):void=> {
-    // @ts-ignore
-    console.log(req.user)
-    res.send("Hello world")
-})
-
-// router.post("/register", ...);
-// router.get("/login", ...);
-// router.get("/logout", ...);
+router.post("/register", registerUser);
+router.post("/login", loginUser);
 
 export default router;

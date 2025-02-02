@@ -1,8 +1,11 @@
 import {getErrorResponse} from "../services/api/responseService";
 import { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
+import {getUserByUsername} from "../services/userService";
+import {ApiError} from "./errorHandler";
+import User from "../models/User";
 
-export function authenticateToken(req:Request, res:Response, next:NextFunction):void {
+export function authHandler(req:Request, res:Response, next:NextFunction):void {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
 
@@ -16,8 +19,16 @@ export function authenticateToken(req:Request, res:Response, next:NextFunction):
             getErrorResponse(res, 401, "Unauthorized : Invalid token");
             return;
         }
+
+        let currentUser:User | null = getUserByUsername(user.username);
+        if (!currentUser) {
+            throw new ApiError(401, "Unauthorized : This user doesn't exist.");
+        }
+
         // @ts-ignore
         req.user = user;
+        // @ts-ignore
+        req.userData = currentUser;
         next()
     })
 }
