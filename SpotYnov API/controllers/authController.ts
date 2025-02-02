@@ -1,9 +1,9 @@
-import {Request, Response} from "express";
-import {ApiError} from "../middlewares/errorHandler";
-import {createUser, getUserByUsername} from "../services/userService";
-import {getSuccessResponse} from "../services/api/responseService";
+import { Request, Response } from "express";
+import { ApiError } from "../middlewares/errorHandler";
+import { createUser, getUserByUsername } from "../services/userService";
+import { getSuccessResponse } from "../services/api/responseService";
 import User from "../models/User";
-import {generateAccessToken} from "../utils/authentication";
+import { generateAccessToken } from "../utils/authentication";
 
 export const registerUser = (req:Request, res:Response) => {
     // Retrieve username and password

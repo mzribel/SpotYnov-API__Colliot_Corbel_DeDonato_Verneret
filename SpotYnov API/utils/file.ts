@@ -1,5 +1,5 @@
 import fs from 'fs'
-import {UserData} from "../models/UserData";
+import { UserData } from "../models/UserData";
 import User from "../models/User";
 
 export const readUsersDataFromFile = ():UserData => {

@@ -1,8 +1,8 @@
-import {getErrorResponse} from "../services/api/responseService";
+import { getErrorResponse } from "../services/api/responseService";
 import { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
-import {getUserByUsername} from "../services/userService";
-import {ApiError} from "./errorHandler";
+import { getUserByUsername } from "../services/userService";
+import { ApiError } from "./errorHandler";
 import User from "../models/User";
 
 export function authHandler(req:Request, res:Response, next:NextFunction):void {

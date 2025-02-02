@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import {getErrorResponse} from "../services/api/responseService";
+import { getErrorResponse } from "../services/api/responseService";
 
 export class ApiError extends Error {
     statusCode: number;
