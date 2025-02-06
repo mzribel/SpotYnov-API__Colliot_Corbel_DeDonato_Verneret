@@ -28,7 +28,6 @@ export class User {
     static fromObject(obj:Object) {
         const user = Object.assign(new User(), obj)
         user.spotify_token = SpotifyToken.fromObject(user.spotify_token)
-        console.log()
         return user;
     }
 
