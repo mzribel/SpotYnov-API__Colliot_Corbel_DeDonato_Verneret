@@ -38,26 +38,27 @@ export const exchangeAuthorizationCode = async (code: string): Promise<object> =
     return response.data;
 };
 
-export const refreshToken = async (refresh_token:string) => {
-    // refresh token that has been previously stored
+export const refreshToken = async (refresh_token: string): Promise<SpotifyToken|null> => {
+    // Constants
     const url = "https://accounts.spotify.com/api/token";
+    const client_id: string = process.env.SPOTIFY_CLIENT_ID || ""
+    const client_secret: string = process.env.SPOTIFY_CLIENT_SECRET || ""
 
-    const client_id:string = process.env.SPOTIFY_CLIENT_ID||""
-    const client_secret:string = process.env.SPOTIFY_CLIENT_SECRET||""
-
+    // Request header
     const headers = {
         headers: {
             'content-type': 'application/x-www-form-urlencoded',
             'Authorization': 'Basic ' + (Buffer.from(client_id + ':' + client_secret).toString('base64'))
         }
     }
-
+    // Request body
     const params = new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: refresh_token||"",
-        client_id: process.env.SPOTIFY_CLIENT_ID||"",
+        refresh_token: refresh_token || "",
+        client_id: process.env.SPOTIFY_CLIENT_ID || "",
     })
 
-    const response:AxiosResponse<any,any> = await axios.post(url, params, headers);
-    return SpotifyToken.fromObject(response.data);
+    // Spotify request
+    const response: AxiosResponse<any, any> = await axios.post(url, params, headers);
+    return SpotifyToken.fromObject(response.data) ?? null;
 }

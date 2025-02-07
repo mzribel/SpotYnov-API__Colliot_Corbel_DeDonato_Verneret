@@ -36,4 +36,7 @@ export class SpotifyToken {
     get refreshToken() {
         return this.refresh_token;
     }
+    set refreshToken(newValue:string|undefined) {
+        this.refresh_token = newValue;
+    }
 }

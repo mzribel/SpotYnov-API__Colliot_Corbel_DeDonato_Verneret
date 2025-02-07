@@ -1,8 +1,10 @@
-import { readUsersDataFromFile, writeUserDataToFile } from "../utils/file";
+import {readUsersDataFromFile, saveUserToFile, writeUserDataToFile} from "../utils/file";
 import User from "../models/User";
 import { UserData } from "../models/UserData";
 import { hashPassword, isPasswordValid, isUsernameValid } from "../utils/format";
 import { ApiError } from "../middlewares/errorHandler";
+import { refreshToken } from "./spotify/spotifyAuthService";
+import {SpotifyToken} from "../models/SpotifyToken";
 
 export const userExists = (username:string, userData:UserData|null=null):boolean => {
     if (!userData) {
@@ -46,9 +48,31 @@ export const getUserByUsername = (username:string):User | null => {
     return user ?? null;
 }
 
-export const saveUserToFile = (user:User):void => {
+export const getUserById = (userID:number):User | null => {
     const userData:UserData = readUsersDataFromFile();
 
-    userData.users[String(user.Id)] = user;
-    writeUserDataToFile(userData);
+    const user:User|undefined =  Object.values(userData.users).find((user: User) => {
+        return (user.Id) == userID;
+    });
+
+    return user ?? null;
+}
+
+export const refreshSpotifyToken = async (userId:number)=> {
+    const user:User|null = getUserById(userId);
+    if (!user) {
+        throw new ApiError(401,"Unauthorized : User doesn't exist.");
+    }
+    if (!user.SpotifyToken || !user.SpotifyToken) {
+        throw new ApiError(401, "Unauthorized : No Spotify account linked to this user.")
+    }
+
+    // @ts-ignore
+    const newTokenData = await refreshToken(user.SpotifyToken.refresh_token);
+    if (!newTokenData) {
+        console.error("Refresh token failed.");
+        return;
+    }
+   user.refreshSpotifyToken(newTokenData);
+    saveUserToFile(user);
 }

@@ -50,6 +50,21 @@ export class User {
         this.spotify_token = SpotifyToken.fromObject(spotify_token);
     }
 
+    public refreshSpotifyToken(newSpotifyToken:SpotifyToken) {
+        // No Spotify token beforehand
+        if (!this.spotify_token) {
+            this.spotify_token = newSpotifyToken;
+            return;
+        }
+
+        // New token doesn't have a new refresh token : keep the one stored
+        if (!newSpotifyToken.refreshToken) {
+            newSpotifyToken.refreshToken = this.spotify_token.refreshToken
+        }
+
+        // Replace token
+        this.spotify_token = newSpotifyToken;
+    }
 
 
     public checkPassword(password:string):boolean {

@@ -21,3 +21,9 @@ export const writeUserDataToFile = (userData:UserData) => {
         if (err) throw err;
     })
 }
+
+export const saveUserToFile = (user:User):void => {
+    const userData:UserData = readUsersDataFromFile();
+    userData.users[user.Id] = user;
+    writeUserDataToFile(userData);
+}
