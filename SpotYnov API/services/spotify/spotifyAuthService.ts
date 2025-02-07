@@ -1,5 +1,6 @@
 import axios, {AxiosResponse} from 'axios';
 import log from '../../logger';
+import {SpotifyToken} from "../../models/SpotifyToken";
 require('dotenv').config();
 
 const SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize';
@@ -36,3 +37,27 @@ export const exchangeAuthorizationCode = async (code: string): Promise<object> =
     const response:AxiosResponse<any,any> = await axios.post(SPOTIFY_TOKEN_URL, params);
     return response.data;
 };
+
+export const refreshToken = async (refresh_token:string) => {
+    // refresh token that has been previously stored
+    const url = "https://accounts.spotify.com/api/token";
+
+    const client_id:string = process.env.SPOTIFY_CLIENT_ID||""
+    const client_secret:string = process.env.SPOTIFY_CLIENT_SECRET||""
+
+    const headers = {
+        headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Basic ' + (Buffer.from(client_id + ':' + client_secret).toString('base64'))
+        }
+    }
+
+    const params = new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refresh_token||"",
+        client_id: process.env.SPOTIFY_CLIENT_ID||"",
+    })
+
+    const response:AxiosResponse<any,any> = await axios.post(url, params, headers);
+    return SpotifyToken.fromObject(response.data);
+}

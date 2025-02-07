@@ -50,6 +50,8 @@ export class User {
         this.spotify_token = SpotifyToken.fromObject(spotify_token);
     }
 
+
+
     public checkPassword(password:string):boolean {
         return this.password == hashPassword(password)
     }
