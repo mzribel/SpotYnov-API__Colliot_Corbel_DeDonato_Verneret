@@ -18,7 +18,7 @@ export const registerUser = (req:Request, res:Response) => {
 
     let response = {
         "message": `User ${newUser.Username} has successfully been registered.`,
-        "access_token": generateAccessToken(newUser.Username)
+        "access_token": generateAccessToken(newUser.Username, newUser.Id)
     }
     getSuccessResponse(res, response, 201)
 }
@@ -38,7 +38,7 @@ export const loginUser = (req:Request, res:Response) => {
 
     let response = {
         "message": `User ${user.Username} has successfully been logged in.`,
-        "access_token": generateAccessToken(user.Username)
+        "access_token": generateAccessToken(user.Username, user.Id)
     }
 
     getSuccessResponse(res, response, 201)

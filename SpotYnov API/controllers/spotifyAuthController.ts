@@ -5,6 +5,7 @@ import { getSuccessResponse, getErrorResponse } from "../services/api/responseSe
 import { ApiError } from "../middlewares/errorHandler";
 import axios, { AxiosResponse } from "axios";
 import {saveUserToFile} from "../utils/file";
+import {getUserById} from "../services/userService";
 
 export const getAuthCodeUrl = (req:Request, res:Response):void => {
     const auth_url:string = getAuthorizationCodeUrl()
@@ -28,6 +29,10 @@ export const handleAuthCodeCallback = async (req:Request, res:Response) => {
 };
 
 export const linkSpotifyAccount =  async (req:Request, res:Response) => {
+    const currentUser = getUserById(req.user?.id)
+    console.log(req.user?.id, currentUser)
+    if (!currentUser) { throw new ApiError(401, "User doesn't exist.") }
+
     const spotify_token = req.body.spotify_token
     if (!spotify_token || !spotify_token.access_token) {
         throw new ApiError(400, "Spotify token data missing or invalid.");
@@ -45,20 +50,20 @@ export const linkSpotifyAccount =  async (req:Request, res:Response) => {
         throw new ApiError(400, "Spotify token data missing or invalid.");
     }
 
-    // @ts-ignore
-    const currentUser = req.userData;
     // Modifies and updates user data
     currentUser.setSpotifyData(response.data.id, spotify_token)
     saveUserToFile(currentUser)
 
     // HTTP Response :
+    // Todo : Attention erreur 500 quand le token est invalide, devrait être 401
     const spotifyUsername = response.data.display_name || "";
     getSuccessResponse(res, {message: `Successfully linked Spotify Account ${spotifyUsername} to user ${currentUser.Username}.`});
 }
 
 export const unlinkSpotifyAccount =  async (req:Request, res:Response) => {
-    // @ts-ignore
-    const currentUser = req.userData;
+    const currentUser = getUserById(parseInt(<string><unknown>req.user?.id))
+    if (!currentUser) { throw new ApiError(401, "User doesn't exist.") }
+
     // Modifies and updates user data
     currentUser.setSpotifyData(undefined, undefined)
     saveUserToFile(currentUser)

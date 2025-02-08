@@ -1,11 +1,8 @@
 import app from'./app';
 import log from './logger';
-import {refreshToken} from "./services/spotify/spotifyAuthService";
-import {refreshSpotifyToken} from "./services/userService";
+import {getUserById} from "./services/userService";
 
 const PORT:string|number = process.env.PORT || 3000;
-
-refreshSpotifyToken(1).then();
 
 app.listen(PORT, ():void => {
     console.log(`\nServer is running on port ${PORT} !`)
