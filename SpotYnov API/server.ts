@@ -1,5 +1,6 @@
 import app from'./app';
 import log from './logger';
+import {getUserById} from "./services/userService";
 
 const PORT:string|number = process.env.PORT || 3000;
 

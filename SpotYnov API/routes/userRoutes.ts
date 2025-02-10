@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
-// TODO: Importer les fonctions de userController
-// const { ... } = require('../controllers/userController');
+import {getUserProfile} from '../controllers/userController';
+import { authHandler } from "../middlewares/authHandler";
 
 // router.post("/users", ...);
 
@@ -12,5 +12,8 @@ const router = express.Router();
 // router.put("/users/:userId/personality", ...);
 
 // router.post("/users/:userId/playlists/from-top-tracks", ...);
+
+// Todo: Remove this route (placeholder for spotify data)
+router.get("/me/latest", authHandler, getUserProfile)
 
 export default router

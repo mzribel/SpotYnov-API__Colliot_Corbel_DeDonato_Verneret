@@ -1,5 +1,15 @@
 import log from '../logger';
-import {getSuccessResponse, getErrorResponse} from "../services/api/responseService";
-
+import { Request, Response, NextFunction } from 'express';
+import { getSuccessResponse} from "../services/api/responseService";
+import {getSpotifyUserProfile} from "../services/spotify/SpotifyService";
 // TODO: Importer les fonctions de userService
-// import { ... } from '../services/userService';
+
+export const getUserProfile = async (req: Request, res: Response, next: NextFunction) => {
+    const userID = req.user?.id;
+    if (userID == undefined) {
+        return;
+    }
+    const data = await getSpotifyUserProfile(userID);
+
+    getSuccessResponse(res, data);
+}
