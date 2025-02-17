@@ -1,82 +1,138 @@
-import { hashPassword } from "../utils/format";
-import { SpotifyToken } from "./SpotifyToken";
+import { hashPassword } from "../utils/auth.util";
+import {SpotifyTokenData, SpotifyData} from "./SpotifyTokenData";
+
+export interface UsersData {
+    auto_increment: number,
+    users: {[key: string]: User}
+}
 
 export class User {
-    private readonly id:number;
-    private readonly username:string;
-    private readonly password:string;
-    private spotify_id: string|undefined;
-    private spotify_token_data: SpotifyToken|undefined;
+    private id:string;
+    private username:string;
+    private password:string;
+    public spotify_data?: SpotifyData
 
-    private constructor(username:string="", password:string="", id:number=-1, spotifyId:string|undefined=undefined, spotifyToken:SpotifyToken|undefined=undefined) {
+    public constructor(username:string, password:string,id:string="",spotify_data?:SpotifyData) {
+        this.id = id;
         this.username = username;
         this.password = password;
+        this.spotify_data = spotify_data;
+    }
+
+    // --------- GETTERS & SETTERS --------- //
+
+    get Id():string {
+        return this.id;             // No setter for now
+    }
+    set Id(id:string) {
         this.id = id;
-        this.spotify_id = spotifyId;
-        this.spotify_token_data = spotifyToken;
     }
-
-    public static create(username:string, password:string, id:number=-1) {
-        username = username.trim();
-        let hashed_password = hashPassword(password);
-        if (!username || !hashed_password) {
-            throw new Error("Username and password are required");
-        }
-        return new User(username, password, id);
-    }
-
-    static fromObject(obj:Object) {
-        const user = Object.assign(new User(), obj)
-        user.spotify_token_data = SpotifyToken.fromObject(user.spotify_token_data)
-        return user;
-    }
-
     get Username():string {
-        return this.username;
+        return this.username;       // No setter for now
     }
-    get Id():number {
-        return this.id;
+
+    getSpotifyUserData():{id:string, display_name:string}|null {
+        if (!this.spotify_data) return null;
+
+        return {
+            id: this.spotify_data.id,
+            display_name: this.spotify_data.display_name
+        }
     }
-    get SpotifyId():string|undefined {
-        return this.spotify_id;
+
+    setSpotifyData(id:string, display_name:string, token_data:object) {
+        const tokenData:SpotifyTokenData = SpotifyTokenData.fromObject(token_data)
+        if (!tokenData || !tokenData.AccessToken || !id ) return;
+
+        this.spotify_data = {
+            id:id,
+            display_name:display_name,
+            token_data:tokenData
+        }
+    }
+
+    deleteSpotifyData() {
+        this.spotify_data = undefined;
     }
 
     get SpotifyAccessToken():string {
-        return this.spotify_token_data?.AccessToken ?? "";
+        return this.spotify_data?.token_data?.AccessToken ?? "";
     }
     get SpotifyRefreshToken():string {
-        return this.spotify_token_data?.refreshToken ?? "";
+        return this.spotify_data?.token_data?.RefreshToken ?? "";
     }
 
     public hasSpotifyTokenData():boolean {
-        return !(!this.spotify_token_data);     // LMAO j'ai oublié comment on fait
+        return !(!this.spotify_data?.token_data);     // LMAO j'ai oublié comment on fait
     }
 
-    public setSpotifyData(spotify_id:string|undefined, spotify_token:object
-        |undefined) {
-        this.spotify_id = spotify_id;
-        this.spotify_token_data = SpotifyToken.fromObject(spotify_token);
-    }
-
-    public refreshSpotifyToken(newSpotifyToken:SpotifyToken) {
-        // No Spotify token beforehand
-        if (!this.spotify_token_data) {
-            this.spotify_token_data = newSpotifyToken;
-            return;
-        }
-
-        // New token doesn't have a new refresh token : keep the one stored
-        if (!newSpotifyToken.refreshToken) {
-            newSpotifyToken.refreshToken = this.spotify_token_data.refreshToken
-        }
-
-        // Replace token
-        this.spotify_token_data = newSpotifyToken;
-    }
+    // public setSpotifyData(spotify_id:string|undefined, spotify_display_name:string|undefined, spotify_token:object
+    //     |undefined) {
+    //     this.spotify_id = spotify_id;
+    //     this.spotify_display_name = spotify_display_name;
+    //     this.spotify_token_data = SpotifyTokenData.fromObject(spotify_token);
+    // }
+    //
+    // public refreshSpotifyToken(newSpotifyToken:SpotifyTokenData) {
+    //     // No Spotify token beforehand
+    //     if (!this.spotify_token_data) {
+    //         this.spotify_token_data = newSpotifyToken;
+    //         return;
+    //     }
+    //
+    //     // New token doesn't have a new refresh token : keep the one stored
+    //     if (!newSpotifyToken.refreshToken) {
+    //         newSpotifyToken.refreshToken = this.spotify_token_data.refreshToken
+    //     }
+    //
+    //     // Replace token
+    //     this.spotify_token_data = newSpotifyToken;
+    // }
 
     public checkPassword(password:string):boolean {
         return this.password == hashPassword(password)
     }
+
+
+    public toDTO = ():object => {
+        let spotify_data_dto = this.spotify_data ?
+            { id: this.spotify_data.id, display_name: this.spotify_data.display_name} :
+            undefined;
+        return new UserDTO(this.id, this.username, spotify_data_dto);
+    }
+
+    static fromObject(obj:Object):User {
+        let user:User = Object.assign(new User("", "", ""), obj);
+        if (!user.spotify_data || !user.spotify_data.token_data) { return user; }
+
+        user.spotify_data.token_data = SpotifyTokenData.fromObject(user.spotify_data.token_data)
+
+        // If ?
+
+        return user;
+    }
+
 }
+
+export interface UserData {
+    auto_increment: number,
+    users: {[key: string]: User}
+}
+
+export class UserDTO {
+    public id:string
+    public username:string
+    public spotify_data?:{
+        id:string,
+        display_name:string,
+    }
+    public constructor(id:string,username:string, spotify_data?:{id:string,display_name:string,}) {
+        this.id = id;
+        this.username = username;
+        this.spotify_data=spotify_data
+    }
+}
+
+
 
 export default User;

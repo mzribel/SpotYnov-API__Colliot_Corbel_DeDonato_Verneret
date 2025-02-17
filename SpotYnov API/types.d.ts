@@ -2,10 +2,8 @@ import { Request } from 'express';
 
 // Define the shape of your user object
 interface UserToken {
-    id: number;
-    username: string,
-    iat: number;
-    exp: number;
+    id: string;
+    username: string
 }
 
 // Extend the Express Request type to include the user property

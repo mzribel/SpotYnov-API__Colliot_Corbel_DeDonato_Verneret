@@ -5,7 +5,7 @@ import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './docs/swagger.json';
 import { errorMiddleware } from "./middlewares/error.middleware";
-import { ApiError } from "./errors/apiError"
+import { ApiError } from "./utils/error.util";
 require('express-async-errors');
 require('dotenv').config();
 

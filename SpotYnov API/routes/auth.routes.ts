@@ -1,9 +1,16 @@
 import express from 'express';
-import { loginUser, registerUser } from "../controllers/auth.controller";
+
+import {UserDAO} from "../daos/user.dao";
+import {UserService} from "../services/user.service";
+import {AuthController} from "../controllers/auth.controller";
 
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+const userDAO = new UserDAO();
+const userService = new UserService(userDAO);
+const authController = new AuthController(userService);
+
+router.post("/register", authController.registerUser);
+router.post("/login", authController.loginUser);
 
 export default router;

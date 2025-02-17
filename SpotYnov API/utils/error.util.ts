@@ -10,7 +10,7 @@ export class ApiError extends Error {
         Object.setPrototypeOf(this, ApiError.prototype);
     }
 
-    // Exemple :
+    // TODO : define static functions for each type of error 
     // public static badRequest(message:string) {
     //  return new ApiError(400, message)
     // }

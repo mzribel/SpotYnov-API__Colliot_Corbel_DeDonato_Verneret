@@ -1,15 +1,19 @@
 import log from '../logger';
 import { Request, Response, NextFunction } from 'express';
 import { getSuccessResponse} from "../services/api/response.service";
-import {getSpotifyUserProfile} from "../services/spotify/spotify.service";
-// TODO: Importer les fonctions de userService
+import { UserService } from "../services/user.service";
 
-export const getUserProfile = async (req: Request, res: Response, next: NextFunction) => {
-    const userID = req.user?.id;
-    if (userID == undefined) {
-        return;
+export class UserController {
+    // Dependancy Injection
+    //@ts-ignore
+    constructor(private userService:UserService) {}
+
+    public getUserData = async (req: Request, res: Response, next: NextFunction) => {
+        const userID = req.user?.id;
+        if (userID == undefined) {
+            return;
+        }
+        const user = this.userService.getUserById(userID);
+        getSuccessResponse(res, user);
     }
-    const data = await getSpotifyUserProfile(userID);
-
-    getSuccessResponse(res, data);
 }

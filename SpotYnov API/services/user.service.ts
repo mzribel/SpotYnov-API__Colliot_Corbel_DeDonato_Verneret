@@ -1,77 +1,80 @@
-import {readUsersDataFromFile, saveUserToFile, writeUserDataToFile} from "../utils/file";
 import User from "../models/User";
-import { UserData } from "../models/UserData";
-import { hashPassword, isPasswordValid, isUsernameValid } from "../utils/format";
-import { ApiError } from "../errors/apiError";
-import { refreshToken } from "./spotify/spotify.auth.service";
+import { UserData } from "../models/User";
+import { isPasswordValid, isUsernameValid } from "../utils/validation.util";
+import { hashPassword } from "../utils/auth.util";
+import { ApiError } from "../utils/error.util";
+import {UserDAO} from "../daos/user.dao";
 
-export const userExists = (username:string, userData:UserData|null=null):boolean => {
-    if (!userData) {
-        userData = readUsersDataFromFile();
+export class UserService {
+    constructor(
+        private userDAO: UserDAO
+    ) {}
+
+    public userExists = async (username:string, userData?:UserData):Promise<boolean> => {
+        userData ??= this.userDAO.readFile();
+
+        return Object.values(userData.users).some((user:User) =>
+            user.Username.toLowerCase() === username.toLowerCase()
+        );
+    };
+
+    public createUser = async (username:string, password:string):Promise<User> => {
+        username = username.trim();
+
+        // Validate input
+        if (!isUsernameValid(username)) throw new ApiError(400,"Invalid username format")
+        if (!isPasswordValid(password)) throw new ApiError(400, "Invalid password format")
+
+        // Check if user exists
+        if (await this.userExists(username)) throw new ApiError(409,"A user with this username already exists.");
+
+        // Creates new user
+        const newUser = new User(username, hashPassword(password));
+        // Writes user in file
+        this.userDAO.createUser(newUser);
+
+        // Returns new user
+        return newUser;
     }
 
-    for (const key of Object.keys(userData.users)) {
-        const user = User.fromObject(userData.users[key]);
-        if (user.Username.toLowerCase() == username.toLowerCase()) return true;
+    public getUserByUsername = async (username: string, userData?: UserData): Promise<User | null> => {
+        const users = this.userDAO.getAllUsers();
+        const user = users.find(user =>
+            user.Username.toLowerCase() === username.toLowerCase()
+        );
+        return user ?? null;
     }
-    return false;
-};
 
-export const createUser = (username:string, password:string):User => {
-    const userData:UserData = readUsersDataFromFile();
-    username = username.trim();
-    let hashedPassword = hashPassword(password);
+    public getUserById = (userID:string, userData?:UserData):User | null => {
+        const users = this.userDAO.getAllUsers();
 
-    if (userExists(username, userData)) throw new ApiError(409,"A user with this username already exists.");
-    if (!isUsernameValid(username)) throw new ApiError(400,"Invalid username format")
-    if (!isPasswordValid(password)) throw new ApiError(400, "Invalid password format")
+        const user = users.find((user) => { return user.Id == userID });
+        return user ?? null;
+    }
 
-    // Creates new user and adds to users
-    const newUser = User.create(username, hashedPassword, userData.auto_increment++);
-    userData.users[newUser.Id] = newUser;
-    // Writes in file
-    writeUserDataToFile(userData);
+    public getUserByIDOrExplode = (userID:string, userData?:UserData, errorCode:number=400):User => {
+        const user = this.getUserById(userID, userData);
+        if (!user) throw new ApiError(errorCode, "User not found");
+        return user;
+    }
 
-    // Returns new user
-    return newUser;
+    public setSpotifyUserData = (user:User, id:string, display_name:string, spotifyTokenDataObj:object)=> {
+        let users_to_update: Array<User> = [];
+        // A user aleady has this spotify id : we remove it
+        this.userDAO.getAllUsers().forEach((u:User) => {
+            if (u.spotify_data?.id == id) {
+                u.deleteSpotifyData();
+                users_to_update.push(u);
+            }
+        });
+
+        user.setSpotifyData(id, display_name, spotifyTokenDataObj);
+        this.userDAO.updateUsers([user, ...users_to_update])
+    }
+
+    public deleteSpotifyUserData = (user:User):void => {
+        user.deleteSpotifyData();
+        this.userDAO.updateUser(user);
+    }
 }
 
-export const getUserByUsername = (username:string):User | null => {
-    const userData:UserData = readUsersDataFromFile();
-    username = username.trim();
-
-    const user:User|undefined =  Object.values(userData.users).find((user: User) => {
-        return (user.Username).toLowerCase() == username.toLowerCase();
-    });
-
-    return user ?? null;
-}
-
-export const getUserById = (userID:number|undefined):User | null => {
-    const userData:UserData = readUsersDataFromFile();
-    const user:User|undefined =  Object.values(userData.users).find((user: User) => {
-        return (user.Id) == userID;
-    });
-
-    return user ?? null;
-}
-
-export const refreshSpotifyToken = async (userId:number)=> {
-    const user:User|null = getUserById(userId);
-    if (user == null) {
-        throw new ApiError(401,"User doesn't exist.");
-    }
-
-    if (!user.hasSpotifyTokenData()) {
-        throw new ApiError(401, "No Spotify account linked to this user.")
-    }
-
-    const newTokenData = await refreshToken(user.SpotifyRefreshToken);
-    if (!newTokenData) {
-        console.error("Refresh token failed.");
-        return null;
-    }
-    user.refreshSpotifyToken(newTokenData);
-    saveUserToFile(user);
-    return newTokenData.AccessToken ?? null;
-}

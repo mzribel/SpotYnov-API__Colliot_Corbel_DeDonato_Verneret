@@ -1,8 +1,7 @@
 import { getErrorResponse } from "../services/api/response.service";
 import { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
-import {userExists} from "../services/user.service";
-import { ApiError } from "../errors/apiError";
+import { ApiError } from "../utils/error.util";
 
 export function authMiddleware(req:Request, res:Response, next:NextFunction):void {
     const authHeader = req.headers['authorization']
@@ -17,10 +16,6 @@ export function authMiddleware(req:Request, res:Response, next:NextFunction):voi
         if (err) {
             getErrorResponse(res, 401, "Invalid token");
             return;
-        }
-
-        if (!userExists(user.username)) {
-            throw new ApiError(401, "User doesn't exist.");
         }
 
         req.user = user;
