@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
-import {getUserProfile} from '../controllers/userController';
-import { authHandler } from "../middlewares/authHandler";
+import {getUserProfile} from '../controllers/user.controller';
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 // router.post("/users", ...);
 
@@ -14,6 +14,6 @@ import { authHandler } from "../middlewares/authHandler";
 // router.post("/users/:userId/playlists/from-top-tracks", ...);
 
 // Todo: Remove this route (placeholder for spotify data)
-router.get("/me/latest", authHandler, getUserProfile)
+router.get("/me/latest", authMiddleware, getUserProfile)
 
 export default router

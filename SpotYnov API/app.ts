@@ -4,7 +4,8 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './docs/swagger.json';
-import { ApiError, apiErrorHandler } from "./middlewares/errorHandler";
+import { errorMiddleware } from "./middlewares/error.middleware";
+import { ApiError } from "./errors/apiError"
 require('express-async-errors');
 require('dotenv').config();
 
@@ -22,10 +23,10 @@ app.use(apiLimiter);
 app.use(bodyParser.json());
 
 // ROUTES
-import authRoutes from './routes/authRoutes';
-import spotifyAuthRoutes from './routes/spotifyAuthRoutes';
-import userRoutes from './routes/userRoutes';
-import groupRoutes from './routes/groupRoutes';
+import authRoutes from './routes/auth.routes';
+import spotifyAuthRoutes from './routes/spotify.auth.routes';
+import userRoutes from './routes/user.routes';
+import groupRoutes from './routes/group.routes';
 
 app.use('/', authRoutes);
 app.use('/spotify', spotifyAuthRoutes);
@@ -39,5 +40,5 @@ app.use((req:Request, res:Response):void => {
 })
 
 // @ts-ignore
-app.use(apiErrorHandler)
+app.use(errorMiddleware)
 export default app;

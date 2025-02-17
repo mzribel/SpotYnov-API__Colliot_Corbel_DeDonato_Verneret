@@ -1,11 +1,10 @@
-import { getErrorResponse } from "../services/api/responseService";
+import { getErrorResponse } from "../services/api/response.service";
 import { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
-import {getUserByUsername, userExists} from "../services/userService";
-import { ApiError } from "./errorHandler";
-import User from "../models/User";
+import {userExists} from "../services/user.service";
+import { ApiError } from "../errors/apiError";
 
-export function authHandler(req:Request, res:Response, next:NextFunction):void {
+export function authMiddleware(req:Request, res:Response, next:NextFunction):void {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
 

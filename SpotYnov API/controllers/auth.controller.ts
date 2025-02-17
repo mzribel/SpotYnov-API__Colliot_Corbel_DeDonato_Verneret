@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { ApiError } from "../middlewares/errorHandler";
-import { createUser, getUserByUsername } from "../services/userService";
-import { getSuccessResponse } from "../services/api/responseService";
+import { ApiError } from "../errors/apiError";
+import { createUser, getUserByUsername } from "../services/user.service";
+import { getSuccessResponse } from "../services/api/response.service";
 import User from "../models/User";
 import { generateAccessToken } from "../utils/authentication";
 

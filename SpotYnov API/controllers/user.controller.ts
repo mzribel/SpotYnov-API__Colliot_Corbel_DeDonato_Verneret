@@ -1,7 +1,7 @@
 import log from '../logger';
 import { Request, Response, NextFunction } from 'express';
-import { getSuccessResponse} from "../services/api/responseService";
-import {getSpotifyUserProfile} from "../services/spotify/SpotifyService";
+import { getSuccessResponse} from "../services/api/response.service";
+import {getSpotifyUserProfile} from "../services/spotify/spotify.service";
 // TODO: Importer les fonctions de userService
 
 export const getUserProfile = async (req: Request, res: Response, next: NextFunction) => {

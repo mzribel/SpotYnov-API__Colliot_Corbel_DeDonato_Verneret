@@ -2,8 +2,8 @@ import {readUsersDataFromFile, saveUserToFile, writeUserDataToFile} from "../uti
 import User from "../models/User";
 import { UserData } from "../models/UserData";
 import { hashPassword, isPasswordValid, isUsernameValid } from "../utils/format";
-import { ApiError } from "../middlewares/errorHandler";
-import { refreshToken } from "./spotify/spotifyAuthService";
+import { ApiError } from "../errors/apiError";
+import { refreshToken } from "./spotify/spotify.auth.service";
 
 export const userExists = (username:string, userData:UserData|null=null):boolean => {
     if (!userData) {

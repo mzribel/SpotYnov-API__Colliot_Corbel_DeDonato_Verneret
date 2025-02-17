@@ -1,8 +1,8 @@
 // TODO : Exporter les méthodes utiles :
 import axios, {AxiosError} from 'axios';
-import {getUserById, refreshSpotifyToken} from "../userService";
+import {getUserById, refreshSpotifyToken} from "../user.service";
 import User from "../../models/User";
-import {ApiError} from "../../middlewares/errorHandler";
+import {ApiError} from "../../errors/apiError";
 
 
 export const makeRequest = async (endpoint:string, accessToken:string, method:string="GET", headers:object={}, params:object={}, body:object={}) => {
