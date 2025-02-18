@@ -1,11 +1,10 @@
 import log from '../logger';
 import { Request, Response, NextFunction } from 'express';
-import { getSuccessResponse} from "../services/api/response.service";
+import { ResponseService } from "../services/api/response.service";
 import { UserService } from "../services/user.service";
 
 export class UserController {
     // Dependancy Injection
-    //@ts-ignore
     constructor(private userService:UserService) {}
 
     public getUserData = async (req: Request, res: Response, next: NextFunction) => {
@@ -14,6 +13,6 @@ export class UserController {
             return;
         }
         const user = this.userService.getUserById(userID);
-        getSuccessResponse(res, user);
+        ResponseService.handleSuccessResponse(res, user);
     }
 }

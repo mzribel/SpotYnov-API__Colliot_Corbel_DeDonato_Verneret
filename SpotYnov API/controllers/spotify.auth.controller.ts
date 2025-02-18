@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import log from '../logger';
-import { getSuccessResponse, getErrorResponse } from "../services/api/response.service";
+import { ResponseService } from "../services/api/response.service";
 import { ApiError } from "../utils/error.util";
 import axios, { AxiosResponse } from "axios";
 import {UserSpotifyService} from "../services/user.spotify.service";
@@ -20,7 +20,7 @@ export class SpotifyAuthController{
 
     public getAuthCodeUrl = (req:Request, res:Response):void => {
         const auth_url:string = this.spotifyAuthService.getAuthorizationCodeUrl();
-        getSuccessResponse(res, {url: auth_url})
+        ResponseService.handleSuccessResponse(res, {url: auth_url})
     };
 
     public handleAuthCodeCallback = async (req:Request, res:Response) => {
@@ -28,11 +28,11 @@ export class SpotifyAuthController{
         try {
             const tokenData = await this.spotifyAuthService.exchangeAuthorizationCode(code);
             log.info('Successfully exchanged token data');
-            getSuccessResponse(res, tokenData);
+            ResponseService.handleSuccessResponse(res, tokenData);
         } catch (err) {
             const error = err as Error;     // Typescript...
             log.error('Error while exchanging authorization code for token', error.message || error);
-            getErrorResponse(res, 500, error.message);
+            ResponseService.handleErrorResponse(res, 500, error.message);
         }
     };
 
@@ -59,7 +59,7 @@ export class SpotifyAuthController{
         // HTTP Response :
         // Todo : Attention erreur 500 quand le token est invalide, devrait être 401
         const spotifyUsername = response.data.display_name || "";
-        getSuccessResponse(res, {message: `Successfully linked Spotify Account ${spotifyUsername} to user ${currentUser.Username}.`});
+        ResponseService.handleSuccessResponse(res, {message: `Successfully linked Spotify Account ${spotifyUsername} to user ${currentUser.Username}.`});
     }
 
     public unlinkSpotifyAccount =  async (req:Request, res:Response) => {
@@ -67,7 +67,7 @@ export class SpotifyAuthController{
 
         // Modifies and updates user data
         this.userService.deleteSpotifyUserData(currentUser);
-        getSuccessResponse(res, {message: `Successfully unlinked Spotify Account from user ${currentUser.Username}.`});
+        ResponseService.handleSuccessResponse(res, {message: `Successfully unlinked Spotify Account from user ${currentUser.Username}.`});
     }
 }
 

@@ -13,7 +13,6 @@ const userService = new UserService(userDAO);
 const spotifyAuthService = new SpotifyAuthService();
 const spotifyAuthController = new SpotifyAuthController(userService, spotifyAuthService);
 
-
 router.get("/auth", authMiddleware, spotifyAuthController.getAuthCodeUrl);
 router.get("/callback", spotifyAuthController.handleAuthCodeCallback);
 router.post("/link_account", authMiddleware, spotifyAuthController.linkSpotifyAccount)

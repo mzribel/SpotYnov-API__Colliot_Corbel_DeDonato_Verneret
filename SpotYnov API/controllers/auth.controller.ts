@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ApiError } from "../utils/error.util";
-import { getSuccessResponse } from "../services/api/response.service";
+import { ResponseService } from "../services/api/response.service";
 import User from "../models/User";
 import { generateAccessToken } from "../utils/auth.util";
 import { UserService } from "../services/user.service";
@@ -23,7 +23,7 @@ export class AuthController {
             "message": `User ${newUser.Username} has successfully been registered.`,
             "access_token": generateAccessToken(newUser.Username, newUser.Id)
         }
-        getSuccessResponse(res, response, 201)
+        ResponseService.handleSuccessResponse(res, response, 201)
     }
 
     public loginUser = async (req:Request, res:Response) => {
@@ -44,7 +44,7 @@ export class AuthController {
             "access_token": generateAccessToken(user.Username, user.Id)
         }
 
-        getSuccessResponse(res, response, 201)
+        ResponseService.handleSuccessResponse(res, response, 201)
     }
 }
 
