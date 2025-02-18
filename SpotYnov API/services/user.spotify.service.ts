@@ -11,7 +11,7 @@ export class UserSpotifyService {
     ) {}
 
     public async refreshUserToken(userID:string) {
-        const user:User|null = await this.userService.getUserById(userID);
+        const user:User|null = this.userService.getUserById(userID);
         if (user == null) {
             throw new ApiError(401,"User doesn't exist.");
         }

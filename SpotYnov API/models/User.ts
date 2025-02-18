@@ -20,7 +20,6 @@ export class User {
     }
 
     // --------- GETTERS & SETTERS --------- //
-
     get Id():string {
         return this.id;             // No setter for now
     }
@@ -31,6 +30,7 @@ export class User {
         return this.username;       // No setter for now
     }
 
+    // ------------- METHODS -------------- //
     getSpotifyUserData():{id:string, display_name:string}|null {
         if (!this.spotify_data) return null;
 
@@ -39,7 +39,6 @@ export class User {
             display_name: this.spotify_data.display_name
         }
     }
-
     setSpotifyData(id:string, display_name:string, token_data:object) {
         const tokenData:SpotifyTokenData = SpotifyTokenData.fromObject(token_data)
         if (!tokenData || !tokenData.AccessToken || !id ) return;
@@ -50,11 +49,9 @@ export class User {
             token_data:tokenData
         }
     }
-
     deleteSpotifyData() {
         this.spotify_data = undefined;
     }
-
     get SpotifyAccessToken():string {
         return this.spotify_data?.token_data?.AccessToken ?? "";
     }

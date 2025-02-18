@@ -10,5 +10,6 @@ export const errorMiddleware = (err:Error|ApiError, req:Request, res:Response, n
     } else if (err instanceof AxiosError) {
         return ResponseService.handleErrorResponse(res, 500, "Spotify Error : "+err.message);
     }
+    console.log(err.message)
     return ResponseService.handleErrorResponse(res, 500, "Internal Server Error.")
 }

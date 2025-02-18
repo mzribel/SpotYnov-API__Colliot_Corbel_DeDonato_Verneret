@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import log from '../logger';
 import { ResponseService } from "../services/api/response.service";
 import { ApiError } from "../utils/error.util";
-import axios, { AxiosResponse } from "axios";
 import {UserSpotifyService} from "../services/user.spotify.service";
 import {UserService} from "../services/user.service";
 import {SpotifyAuthService} from "../services/spotify/spotify.auth.service";
+import {SpotifyRequestService} from "../services/spotify/spotify.request.service";
 
 export class SpotifyAuthController{
     private userSpotifyService: UserSpotifyService;
@@ -43,23 +43,14 @@ export class SpotifyAuthController{
             throw new ApiError(400, "Spotify token data missing or invalid.");
         }
 
-        // Todo: Centralize spotify data fetching (SpotifyAPIService)
         let currentUser = this.userService.getUserByIDOrExplode(req.user?.id ?? "")
-        const config = {
-            headers: {
-                Authorization: `Bearer ${spotify_token.access_token}`,
-            }
-        }
-        const response:AxiosResponse<any,any> = await axios.get("https://api.spotify.com/v1/me", config);
-        if (!response.data) { throw new ApiError(400, "Spotify token data missing or invalid.") }
+        const response = await new SpotifyRequestService().request({method:"get", endpoint:"/me", access_token:spotify_token.access_token});
+        if (!response) { throw new ApiError(400, "Spotify token data missing or invalid.") }
 
         // Modifies and updates user data
-        this.userService.setSpotifyUserData(currentUser, response.data.id, response.data.display_name, spotify_token)
-
-        // HTTP Response :
-        // Todo : Attention erreur 500 quand le token est invalide, devrait être 401
-        const spotifyUsername = response.data.display_name || "";
-        ResponseService.handleSuccessResponse(res, {message: `Successfully linked Spotify Account ${spotifyUsername} to user ${currentUser.Username}.`});
+        this.userService.setSpotifyUserData(currentUser, response.id, response.display_name, spotify_token)
+        // Returns
+        ResponseService.handleSuccessResponse(res, {message: `Successfully linked Spotify Account ${response.display_name} to user ${currentUser.Username}.`});
     }
 
     public unlinkSpotifyAccount =  async (req:Request, res:Response) => {

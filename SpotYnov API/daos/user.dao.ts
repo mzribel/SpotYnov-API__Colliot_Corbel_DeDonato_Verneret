@@ -5,7 +5,6 @@ import {readFileSync, writeFileSync} from "node:fs";
 
 export class UserDAO {
     private readonly filePath:string = path.resolve(__dirname, '../data/users.json');
-
     public readFile():UserData {
         const data = readFileSync(this.filePath, 'utf-8');
         const userData:UserData = JSON.parse(data) as UserData;
@@ -16,15 +15,12 @@ export class UserDAO {
 
         return userData;
     }
-
     public writeFile(data: UserData): void {
         writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf8');
     }
-
     public getAllUsers():User[] {
         return Object.values(this.readFile().users);
     }
-
     public createUser(user:User):User {
         let data:UserData = this.readFile();
 
@@ -34,7 +30,6 @@ export class UserDAO {
         this.writeFile(data);
         return user;
     }
-
     public updateUser(user: User): User | null {
         const data:UserData = this.readFile();
         if (!user.Id || !data.users[user.Id]) return null;
@@ -44,7 +39,6 @@ export class UserDAO {
 
         return user;
     }
-
     public updateUsers(users: Array<User>) {
         const data:UserData = this.readFile();
         users.forEach((user:User)=> {
@@ -53,7 +47,6 @@ export class UserDAO {
         })
         this.writeFile(data)
     }
-
     public deleteUser(userID:string): boolean {
         const data = this.readFile();
         if (!data.users[userID]) return false;

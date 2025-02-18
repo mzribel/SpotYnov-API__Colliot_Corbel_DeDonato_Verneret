@@ -2,9 +2,7 @@ import express from 'express';
 const router = express.Router();
 import { SpotifyAuthController } from "../controllers/spotify.auth.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import {SpotifyService} from "../services/spotify/spotify.service";
 import {SpotifyAuthService} from "../services/spotify/spotify.auth.service";
-import {UserSpotifyService} from "../services/user.spotify.service";
 import {UserService} from "../services/user.service";
 import {UserDAO} from "../daos/user.dao";
 

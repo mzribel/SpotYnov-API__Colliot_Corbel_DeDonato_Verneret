@@ -67,7 +67,6 @@ export class UserService {
                 users_to_update.push(u);
             }
         });
-
         user.setSpotifyData(id, display_name, spotifyTokenDataObj);
         this.userDAO.updateUsers([user, ...users_to_update])
     }
