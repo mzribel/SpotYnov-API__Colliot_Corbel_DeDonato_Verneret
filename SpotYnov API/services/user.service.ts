@@ -1,4 +1,4 @@
-import User from "../models/User";
+import User, {UserDTO} from "../models/User";
 import { UserData } from "../models/User";
 import { isPasswordValid, isUsernameValid } from "../utils/validation.util";
 import { hashPassword } from "../utils/auth.util";
@@ -30,7 +30,6 @@ export class UserService {
 
         // Creates new user
         const newUser = new User(username, hashPassword(password));
-        // Writes user in file
         this.userDAO.createUser(newUser);
 
         // Returns new user
@@ -51,6 +50,16 @@ export class UserService {
         const user = users.find((user) => { return user.Id == userID });
         return user ?? null;
     }
+    public getUserDTOById = (userID:string, userData?:UserData):UserDTO | null => {
+        return this.getUserById(userID)?.toDTO() ?? null;
+    }
+
+    public getUsers = () => {
+        return this.userDAO.getAllUsers();
+    }
+    public getUsersDTO = ():UserDTO[] => {
+        return this.getUsers().map((user:User) => user.toDTO());
+    }
 
     public getUserByIDOrExplode = (userID:string, userData?:UserData, errorCode:number=400):User => {
         const user = this.getUserById(userID, userData);
@@ -58,7 +67,7 @@ export class UserService {
         return user;
     }
 
-    public setSpotifyUserData = (user:User, id:string, display_name:string, spotifyTokenDataObj:object)=> {
+    public setSpotifyUserData = (user:User, spotifyTokenDataObj:object, id?:string, display_name?:string)=> {
         let users_to_update: Array<User> = [];
         // A user aleady has this spotify id : we remove it
         this.userDAO.getAllUsers().forEach((u:User) => {
@@ -67,7 +76,9 @@ export class UserService {
                 users_to_update.push(u);
             }
         });
-        user.setSpotifyData(id, display_name, spotifyTokenDataObj);
+
+        if (!id || !display_name) user.setSpotifyToken(spotifyTokenDataObj);
+        else user.setSpotifyData(spotifyTokenDataObj, id, display_name);
         this.userDAO.updateUsers([user, ...users_to_update])
     }
 
@@ -75,5 +86,7 @@ export class UserService {
         user.deleteSpotifyData();
         this.userDAO.updateUser(user);
     }
+
+
 }
 

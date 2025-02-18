@@ -8,8 +8,9 @@ export const errorMiddleware = (err:Error|ApiError, req:Request, res:Response, n
     if (err instanceof ApiError) {
         return ResponseService.handleErrorResponse(res, err.statusCode, err.message);
     } else if (err instanceof AxiosError) {
+        console.log(err)
         return ResponseService.handleErrorResponse(res, 500, "Spotify Error : "+err.message);
     }
-    console.log(err.message)
+
     return ResponseService.handleErrorResponse(res, 500, "Internal Server Error.")
 }

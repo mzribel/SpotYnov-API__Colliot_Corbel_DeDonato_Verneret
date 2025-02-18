@@ -1,7 +1,6 @@
 import { ResponseService } from "../services/api/response.service";
 import { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
-import { ApiError } from "../utils/error.util";
 
 export function authMiddleware(req:Request, res:Response, next:NextFunction):void {
     const authHeader = req.headers['authorization']

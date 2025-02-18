@@ -1,11 +1,10 @@
-import axios, {AxiosResponse} from 'axios';
 import log from '../../logger';
-import {SpotifyTokenData} from "../../models/SpotifyTokenData";
+import {SpotifyTokenData} from "../../models/SpotifyData";
+import {SpotifyRequestService} from "./spotify.request.service";
 require('dotenv').config();
 
 export class SpotifyAuthService {
     private static SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize';
-    private static SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
     private static USER_SCOPE:string[] = [
         "user-read-playback-state",     // Connaître l'état du lecteur (musique et appareil en cours)
         "user-modify-playback-state",   // Modifier l'état du lecteur
@@ -14,6 +13,11 @@ export class SpotifyAuthService {
         "playlist-modify-public",       // Créer/modifier des playlists publiques
         "playlist-modify-private"       // Créer/modifier des playlists privées
     ]
+
+    private spotifyRequestService: SpotifyRequestService
+    public constructor() {
+        this.spotifyRequestService = new SpotifyRequestService()
+    }
 
     public getAuthorizationCodeUrl = ():string => {
         const params = new URLSearchParams({
@@ -35,10 +39,11 @@ export class SpotifyAuthService {
         });
 
         log.info('Exchanging authorization code for token...');
-        const response:AxiosResponse<any,any> = await axios.post(SpotifyAuthService.SPOTIFY_TOKEN_URL, params);
-        return response.data;
+        return this.spotifyRequestService.request({method:"post", endpoint:"/token", isAuth:true, params})
     };
 
+
+    // TODO : to spotifyRequestService.request
     public refreshToken = async (refresh_token: string): Promise<SpotifyTokenData|null> => {
         // Constants
         const client_id: string = process.env.SPOTIFY_CLIENT_ID || ""
@@ -46,10 +51,8 @@ export class SpotifyAuthService {
 
         // Request header
         const headers = {
-            headers: {
-                'content-type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Basic ' + (Buffer.from(client_id + ':' + client_secret).toString('base64'))
-            }
+            'content-type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Basic ' + (Buffer.from(client_id + ':' + client_secret).toString('base64'))
         }
         // Request body
         const params = new URLSearchParams({
@@ -59,7 +62,7 @@ export class SpotifyAuthService {
         })
 
         // Spotify request
-        const response: AxiosResponse<any, any> = await axios.post(SpotifyAuthService.SPOTIFY_TOKEN_URL, params, headers);
+        const response = await this.spotifyRequestService.request({method:"post", endpoint:"api/token", isAuth:true, params, headers})
         return SpotifyTokenData.fromObject(response.data) ?? null;
     }
 }

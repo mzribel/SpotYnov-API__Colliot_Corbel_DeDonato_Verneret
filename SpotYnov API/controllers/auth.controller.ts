@@ -43,7 +43,7 @@ export class AuthController {
             "message": `User ${user.Username} has successfully been logged in.`,
             "access_token": generateAccessToken(user.Username, user.Id)
         }
-
+''
         ResponseService.handleSuccessResponse(res, response, 201)
     }
 }

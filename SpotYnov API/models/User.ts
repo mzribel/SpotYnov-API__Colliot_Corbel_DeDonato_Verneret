@@ -1,5 +1,7 @@
 import { hashPassword } from "../utils/auth.util";
-import {SpotifyTokenData, SpotifyData} from "./SpotifyTokenData";
+import {SpotifyTokenData, SpotifyData} from "./SpotifyData";
+import {UserDAO} from "../daos/user.dao";
+import {ApiError} from "../utils/error.util";
 
 export interface UsersData {
     auto_increment: number,
@@ -39,7 +41,7 @@ export class User {
             display_name: this.spotify_data.display_name
         }
     }
-    setSpotifyData(id:string, display_name:string, token_data:object) {
+    setSpotifyData(token_data:object, id:string, display_name:string, ) {
         const tokenData:SpotifyTokenData = SpotifyTokenData.fromObject(token_data)
         if (!tokenData || !tokenData.AccessToken || !id ) return;
 
@@ -49,6 +51,16 @@ export class User {
             token_data:tokenData
         }
     }
+    setSpotifyToken(token_data:object|SpotifyTokenData) {
+        if (!this.spotify_data?.id || !this.spotify_data.display_name)
+            throw new ApiError(400, "jsp")
+
+        let new_token = token_data instanceof SpotifyTokenData ? token_data : SpotifyTokenData.fromObject(token_data)
+        if (!new_token.RefreshToken && this.spotify_data.token_data?.RefreshToken) new_token.RefreshToken = this.spotify_data.token_data?.RefreshToken;
+
+        return new_token;
+    }
+
     deleteSpotifyData() {
         this.spotify_data = undefined;
     }
@@ -91,7 +103,7 @@ export class User {
     }
 
 
-    public toDTO = ():object => {
+    public toDTO = ():UserDTO => {
         let spotify_data_dto = this.spotify_data ?
             { id: this.spotify_data.id, display_name: this.spotify_data.display_name} :
             undefined;
