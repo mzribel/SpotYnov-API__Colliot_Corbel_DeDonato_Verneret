@@ -1,3 +1,4 @@
+import log from '../logger';
 import { SpotifyAuthService } from "./spotify/spotify.auth.service";
 import { UserService } from "./user.service";
 import User from "../models/User";
@@ -15,23 +16,20 @@ export class UserSpotifyService {
         private spotifyApiService: SpotifyApiService
     ) {}
 
-    async request(
-        userID:string,
-        requestFn:(params:SpotifyRequestParams) => Promise<any>,
-        params:SpotifyRequestParams): Promise<any> {
+    async userRequest(
+        user:User,
+        requestFn:(token:string, ...args:any[]) => Promise<any>,
+        ...args:[]): Promise<any> {
 
-        let user = this.userService.getUserById(userID);
-        if (!user || !user.spotify_data?.token_data?.AccessToken) {
-            throw new Error("No Spotify account linked to this user.");
-        }
+        // TODO : L'utilisateur n'a pas de données de token spotify
+        if (!user.spotify_data?.token_data) { throw new ApiError(6969, "jsp") }
 
-        let access_token = user.spotify_data?.token_data?.AccessToken;
         try {
-            return requestFn({... params, access_token});
+            return await requestFn(user.SpotifyAccessToken, ...args);
         } catch (error) {
             if (error instanceof AxiosError) {
-                access_token = await this.refreshUserToken(user) ?? "";
-                return await requestFn({...params, access_token})
+                const new_token = await this.refreshUserToken(user) ?? "";
+                return await requestFn(new_token, ...args);
             }
             throw error;
         }
@@ -42,10 +40,13 @@ export class UserSpotifyService {
 
         const newTokenData = await this.spotifyAuthService.refreshToken(user.SpotifyRefreshToken);
         if (!newTokenData || !newTokenData?.AccessToken) {
+            log.error("")
             throw new ApiError(69, "touche de l'herbe")
         }
 
-        user.setSpotifyToken(newTokenData);
+        log.info(`Successfully refreshed token for user ${user.Id} (${user.Username}).`)
+
+        this.userService.setSpotifyUserData(user, newTokenData)
         return newTokenData.AccessToken;
     }
 
@@ -62,5 +63,9 @@ export class UserSpotifyService {
         // Modifies and updates user data
         this.userService.setSpotifyUserData(user, token_data,userProfileResponse.data.id, userProfileResponse.data.display_name)
         return user.getSpotifyUserData();
+    }
+
+    async getUserSpotifyProfile(user:User) {
+        return this.userRequest(user, (token) => this.spotifyApiService.getSpotifyProfile(token))
     }
 }

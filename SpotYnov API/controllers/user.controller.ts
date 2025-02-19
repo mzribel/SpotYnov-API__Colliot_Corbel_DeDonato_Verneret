@@ -3,10 +3,13 @@ import { Request, Response, NextFunction } from 'express';
 import { UserService } from "../services/user.service";
 import {ApiError} from "../utils/error.util";
 import { ResponseService } from "../services/api/response.service";
+import {UserSpotifyService} from "../services/user.spotify.service";
 
 export class UserController {
     // Dependancy Injection
-    constructor(private userService:UserService) {}
+    constructor(
+        private userService:UserService,
+        private userSpotifyService:UserSpotifyService) {}
 
     public getUserData = async (req: Request, res: Response, next: NextFunction) => {
         // Retrieve path parameters
@@ -24,7 +27,9 @@ export class UserController {
         ResponseService.handleSuccessResponse(res, users)
     }
 
-    public getPlayerState = async (req: Request, res: Response, next: NextFunction) => {
-
+    public getSpotifyUserProfile = async (req: Request, res: Response, next: NextFunction) => {
+        const user = this.userService.getUserByIDOrExplode(req.user?.id ?? "");
+        const data = await this.userSpotifyService.getUserSpotifyProfile(user);
+        ResponseService.handleSuccessResponse(res, data)
     }
 }

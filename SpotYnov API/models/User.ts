@@ -58,6 +58,7 @@ export class User {
         let new_token = token_data instanceof SpotifyTokenData ? token_data : SpotifyTokenData.fromObject(token_data)
         if (!new_token.RefreshToken && this.spotify_data.token_data?.RefreshToken) new_token.RefreshToken = this.spotify_data.token_data?.RefreshToken;
 
+        this.spotify_data.token_data = new_token;
         return new_token;
     }
 
@@ -101,7 +102,6 @@ export class User {
     public checkPassword(password:string):boolean {
         return this.password == hashPassword(password)
     }
-
 
     public toDTO = ():UserDTO => {
         let spotify_data_dto = this.spotify_data ?

@@ -62,7 +62,7 @@ export class SpotifyAuthService {
         })
 
         // Spotify request
-        const response = await this.spotifyRequestService.request({method:"post", endpoint:"api/token", isAuth:true, params, headers})
+        const response = await this.spotifyRequestService.request({method:"post", endpoint:"/token", isAuth:true, params, headers})
         return SpotifyTokenData.fromObject(response.data) ?? null;
     }
 }

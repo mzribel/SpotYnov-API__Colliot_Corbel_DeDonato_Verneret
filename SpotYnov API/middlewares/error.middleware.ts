@@ -11,6 +11,6 @@ export const errorMiddleware = (err:Error|ApiError, req:Request, res:Response, n
         console.log(err)
         return ResponseService.handleErrorResponse(res, 500, "Spotify Error : "+err.message);
     }
-
+    console.log(err)
     return ResponseService.handleErrorResponse(res, 500, "Internal Server Error.")
 }

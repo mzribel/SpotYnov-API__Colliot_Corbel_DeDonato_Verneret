@@ -15,7 +15,7 @@ export class SpotifyRequestService {
     public static readonly AUTH_URL = "https://accounts.spotify.com/api";
 
     async request(req_params:SpotifyRequestParams): Promise<any> {
-        let params = {
+        return axios({
             method: req_params.method,
             url: !req_params.isAuth ? SpotifyRequestService.API_URL + req_params.endpoint : SpotifyRequestService.AUTH_URL + req_params.endpoint,
             headers: {
@@ -24,20 +24,6 @@ export class SpotifyRequestService {
             },
             params: req_params.params,
             data: req_params.body,
-        }
-
-        console.log(params)
-        return axios(params);
+        })
     }
 }
-
-// public makeUserRequest = async (access_token:string, refresh_token:string, endpoint:string, method:string="GET") => {
-//     return await this.makeRequest(endpoint, access_token).catch(async (error: AxiosError) => {
-//         if (error.response && error.response.status == 401) {
-//             const newToken = await this.userService.refreshSpotifyToken(user.Id);
-//             if (newToken) {
-//                 return await this.makeRequest(endpoint, newToken);
-//             }
-//         }
-//     })
-// }
