@@ -22,7 +22,7 @@ router.get("/:userID/", authMiddleware, userController.getUserData)
 // router.put("/users/:userId/personality", ...);
 // router.post("/users/:userId/playlists/from-top-tracks", ...);
 
-// Todo: Remove this route (placeholder for spotify data)
+
 router.get("/me/spotify_profile", authMiddleware, userController.getSpotifyUserProfile)
 
 export default router

@@ -1,6 +1,5 @@
 import { hashPassword } from "../utils/auth.util";
 import {SpotifyTokenData, SpotifyData} from "./SpotifyData";
-import {UserDAO} from "../daos/user.dao";
 import {ApiError} from "../utils/error.util";
 
 export interface UsersData {
