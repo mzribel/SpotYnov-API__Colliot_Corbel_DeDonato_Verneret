@@ -11,6 +11,3 @@ export const isUsernameValid = (username:string, min_length:number=1, max_length
     return usernameRegex.test(username.trim())
 };
 
-export const hashPassword = (password: string, method:string="sha256"):string => {
-    return createHash(method).update(password).digest("hex");
-}
