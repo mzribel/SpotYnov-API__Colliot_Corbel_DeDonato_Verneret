@@ -11,7 +11,8 @@ export class SpotifyAuthService {
         "user-library-read",            // Récupérer les titres likés
         "user-top-read",                // Récupérer les musiques les plus jouées
         "playlist-modify-public",       // Créer/modifier des playlists publiques
-        "playlist-modify-private"       // Créer/modifier des playlists privées
+        "playlist-modify-private",      // Créer/modifier des playlists privées
+        "user-read-currently-playing"   // Yep
     ]
 
     private spotifyRequestService: SpotifyRequestService
@@ -19,7 +20,7 @@ export class SpotifyAuthService {
         this.spotifyRequestService = new SpotifyRequestService()
     }
 
-    public getAuthorizationCodeUrl = ():string => {
+    public generateAuthCodeUrl = ():string => {
         const params = new URLSearchParams({
             response_type: 'code', // Authorization Code Grant
             client_id: process.env.SPOTIFY_CLIENT_ID||"",
@@ -29,7 +30,7 @@ export class SpotifyAuthService {
         return `${SpotifyAuthService.SPOTIFY_AUTH_URL}?${params.toString()}`;
     };
 
-    public exchangeAuthorizationCode = async (code: string): Promise<object> => {
+    public exchangeAuthCode = async (code: string): Promise<object> => {
         const params =  new URLSearchParams({
             grant_type: "authorization_code",
             code: code,
@@ -42,8 +43,6 @@ export class SpotifyAuthService {
         return this.spotifyRequestService.request({method:"post", endpoint:"/token", isAuth:true, params})
     };
 
-
-    // TODO : to spotifyRequestService.request
     public refreshToken = async (refresh_token: string): Promise<SpotifyTokenData|null> => {
         // Constants
         const client_id: string = process.env.SPOTIFY_CLIENT_ID || ""

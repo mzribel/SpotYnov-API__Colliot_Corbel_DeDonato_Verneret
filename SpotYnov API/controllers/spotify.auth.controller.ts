@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
 import log from '../logger';
 import { ResponseService } from "../services/api/response.service";
-import {SpotifyAuthService} from "../services/spotify/spotify.auth.service";
-import {ApiError} from "../utils/error.util";
-import {SpotifyRequestService} from "../services/spotify/spotify.request.service";
-import {UserService} from "../services/user.service";
-import {UserSpotifyService} from "../services/user.spotify.service";
-import {SpotifyApiService} from "../services/spotify/spotify.api.service";
+import { SpotifyAuthService } from "../services/spotify/spotify.auth.service";
+import { ApiError } from "../utils/error.util";
+import { UserService } from "../services/user.service";
+import { UserSpotifyService } from "../services/user.spotify.service";
 
 export class SpotifyAuthController{
 
@@ -17,14 +15,14 @@ export class SpotifyAuthController{
     ) {}
 
     public getAuthCodeUrl = (req:Request, res:Response):void => {
-        const auth_url:string = this.spotifyAuthService.getAuthorizationCodeUrl();
+        const auth_url:string = this.spotifyAuthService.generateAuthCodeUrl();
         ResponseService.handleSuccessResponse(res, {url: auth_url})
     };
 
     public handleAuthCodeCallback = async (req:Request, res:Response) => {
         const code:string = String(req.query.code);
         try {
-            const response:any = await this.spotifyAuthService.exchangeAuthorizationCode(code);
+            const response:any = await this.spotifyAuthService.exchangeAuthCode(code);
             log.info('Successfully exchanged token data');
             ResponseService.handleSuccessResponse(res, response.data);
         } catch (err) {

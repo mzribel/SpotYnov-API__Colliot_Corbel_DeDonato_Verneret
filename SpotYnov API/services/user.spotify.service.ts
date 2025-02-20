@@ -4,7 +4,7 @@ import { UserService } from "./user.service";
 import User from "../models/User";
 import { ApiError } from "../utils/error.util";
 import { SpotifyApiService } from "./spotify/spotify.api.service";
-import {SpotifyRequestParams, SpotifyRequestService} from "./spotify/spotify.request.service";
+import { SpotifyRequestService} from "./spotify/spotify.request.service";
 import { AxiosError } from "axios";
 import {SpotifyTokenData} from "../models/SpotifyData";
 
@@ -50,6 +50,7 @@ export class UserSpotifyService {
         return newTokenData.AccessToken;
     }
 
+    // TODO : Ne jamais re-regarder ce TODO
     public async linkSpotifyAccount(user:User, spotify_token_data:any) {
         const token_data = SpotifyTokenData.fromObject(spotify_token_data)
 
@@ -69,3 +70,10 @@ export class UserSpotifyService {
         return this.userRequest(user, (token) => this.spotifyApiService.getSpotifyProfile(token))
     }
 }
+
+
+
+
+
+
+
