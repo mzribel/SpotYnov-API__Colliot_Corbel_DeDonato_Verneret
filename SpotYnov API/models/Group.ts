@@ -1,21 +1,35 @@
+// ---------------------------------------- //
+// ---------- GROUPSDATA (model) ---------- //
+// ---------------------------------------- //
+import {UserDTO} from "./User";
+
 export interface GroupsData {
     auto_increment: number,
     groups: {[key: string]: Group}
 }
 
+// ---------------------------------------- //
+// ------------- GROUP (model) ------------ //
+// ---------------------------------------- //
 export class Group {
-    private readonly id:string;
+    private id:string;
     private name: string;
-    public members : GroupMember[]
+    public members : GroupMember[];
 
-    private constructor(id:string="", name:string="", members:GroupMember[]=[]) {
+    // ------------- CONSTRUCTOR ------------ //
+    public constructor(id:string="", name:string="", adminID:string="") {
         this.id = id;
         this.name = name;
-        this.members = members;
+        this.members = []
+        if (adminID) { this.members.push(new GroupMember(adminID, true)) }
     }
 
+    // --------- GETTERS & SETTERS --------- //
     get Id():string {
         return this.id;
+    }
+    set Id(id:string) {
+        this.id = id;
     }
     get Name():string {
         return this.name;
@@ -23,22 +37,8 @@ export class Group {
     set Name(name:string) {
         this.name = name;
     }
-    public static create = (id:number, name:string, userID:string) => {
-        if (!id || !userID) {
-            throw new Error("Group ID and user ID are required.");
-        }
-        const admin:GroupMember = new GroupMember(userID, true)
-        return new Group(id.toString(), name, [admin]);
-    }
 
-    public static fromObject = (obj:object) => {
-        let group = Object.assign(new Group(), obj)
-        for (let i = 0; i < group.members.length; i++) {
-            group.members[i] = Object.assign(new GroupMember(), group.members[i])
-        }
-        return group;
-    }
-
+    // ------------- METHODS -------------- //
     public addMember(userID:string) {
         if (this.memberExists(userID)) { return ; }
         this.members.push(new GroupMember(userID));
@@ -58,27 +58,32 @@ export class Group {
         return this.members.find((member:GroupMember):boolean => member.IsAdmin)?.Id ?? null;
     }
 
-    public promoteRandomUserToAdmin = () => {
-        if (!this.members.length) return null;
-
-        const randomID:number = Math.floor(Math.random() * (this.members.length));
-
-        for (let i = 0; i < this.members.length; i++) {
-            this.members[i].IsAdmin = false;
-        }
-        this.members[randomID].IsAdmin = true;
-        return this.members[randomID].Id;
-    }
-
     public memberExists = (userID:string) => {
         return !(!this.members.find((member:GroupMember) => member.Id == userID));
     }
 
-    public isMember = (userID:string) => {
-        return !(!this.members.find((member:GroupMember) => userID == member.Id));
+    public setAdmin(userID:string):string|null {
+        if (this.memberExists(userID)) { return null; }
+
+        for (let i = 0; i < this.members.length; i++) {
+            this.members[i].IsAdmin = this.members[i].Id == userID;
+        }
+        return userID;
+    }
+
+    // ------------- CONVERSIONS -------------- //
+    public static fromObject = (obj:Object) => {
+        let group:Group = Object.assign(new Group(), obj);
+        for (let i = 0; i < group.members.length; i++) {
+            group.members[i] = Object.assign(new GroupMember(), group.members[i])
+        }
+        return group;
     }
 }
 
+// ---------------------------------------- //
+// ------------- GROUP MEMBER ------------- //
+// ---------------------------------------- //
 export class GroupMember {
     private readonly id: string = "";
     private isAdmin: boolean = false;
@@ -97,4 +102,22 @@ export class GroupMember {
     set IsAdmin(isAdmin:boolean) {
         this.isAdmin = isAdmin;
     }
+}
+
+// ---------------------------------------- //
+// --------- GROUPDTO (... DTO) ----------- //
+// ---------------------------------------- //
+export class GroupDTO {
+    // public id:string
+    // public name:string
+    // public admin_id?:string | null
+    // public members?:UserDTO[]
+    // public member_count?:number
+    //
+    // public constructor(group:Group) {
+    //     this.id = group.Id;
+    //     this.name = group.Name;
+    //     this.admin_id = group.getAdminID ?? null;
+    //     this.member_count = group.members.length;
+    // }
 }

@@ -13,8 +13,7 @@ export class UserController {
 
     public getUserData = async (req: Request, res: Response, next: NextFunction) => {
         // Retrieve path parameters
-        const userID = req.user?.id ?? "";
-
+        const userID = req.params.userID;
         // Get user
         const user = this.userService.getUserDTOById(userID);
         if (!user) { throw new ApiError(404, "User not found."); }
