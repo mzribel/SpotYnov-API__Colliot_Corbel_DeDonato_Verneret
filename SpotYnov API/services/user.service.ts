@@ -19,14 +19,12 @@ export class UserService {
     };
 
     public createUser = async (username:string, password:string):Promise<User> => {
-        username = username.trim();
-
-        // Validate input
-        if (!isUsernameValid(username)) throw new ApiError(400,"Invalid username format")
-        if (!isPasswordValid(password)) throw new ApiError(400, "Invalid password format")
-
         // Check if user exists
         if (await this.userExists(username)) throw new ApiError(409,"A user with this username already exists.");
+
+        // Validate input
+        if (!isUsernameValid(username)) throw new ApiError(400,"Invalid username format.")
+        if (!isPasswordValid(password)) throw new ApiError(400, "Invalid password format.")
 
         // Creates new user
         const newUser = new User(username, hashPassword(password));
@@ -83,6 +81,9 @@ export class UserService {
     }
 
     public deleteSpotifyUserData = (user:User):void => {
+        if (!user.getSpotifyUserData()) {
+            throw new ApiError(400, "No Spotify account linked to this user.");
+        }
         user.deleteSpotifyData();
         this.userDAO.updateUser(user);
     }

@@ -1,5 +1,5 @@
 import {GroupDAO} from "../daos/group.dao";
-import {Group, GroupsData} from "../models/Group";
+import {Group, GroupDTO, GroupMember, GroupsData} from "../models/Group";
 import User from "../models/User";
 import {ApiError} from "../utils/error.util";
 import log from "../logger";
@@ -10,10 +10,30 @@ export class GroupService {
         private groupDAO:GroupDAO,
         private userService:UserService) {}
 
-    public getGroupByID = (userID:string):Group | null => {
+    public getGroupByID = (groupID:string):Group | null => {
+        const groups = this.groupDAO.getAllGroups();
+        return groups.find((group) => { return group.Id == groupID }) ?? null;
+    }
+
+    public getGroupDTOByID = (groupID:string, show_members:boolean=false):GroupDTO | null => {
         const groups = this.groupDAO.getAllGroups();
 
-        return groups.find((user) => { return user.Id == userID }) ?? null;
+        const group = groups.find((group) => { return group.Id == groupID }) ?? null;
+        if (!group) return null;
+
+        return this.groupToDTO(group, show_members);
+    }
+
+    public groupToDTO = (group:Group, show_members:boolean=false):GroupDTO => {
+        let groupDTO = group.toDTO();
+        if (show_members) {
+            groupDTO.Members = group.members.map((member:GroupMember) => {
+                const userDTO = this.userService.getUserDTOById(member.Id);
+                if (!userDTO) { return; }
+                return { ...userDTO, isAdmin: member.IsAdmin }
+            })
+        }
+        return groupDTO;
     }
 
     public getGroups = ():Group[] => {
@@ -53,8 +73,7 @@ export class GroupService {
 
         // User is already member
         if (group.memberExists(user.Id)) {
-            console.log("addMemberToGroup : Member already exists");
-            return null;
+            throw new ApiError(400, "User is already a member of this group.");
         }
 
         // Delete user from all other groups
@@ -102,7 +121,7 @@ export class GroupService {
     public deleteGroup(groupID:string, groupsData?:GroupsData, saveInFile:boolean=true):void {
         if (!groupsData) groupsData = this.groupDAO.readFile();
         let group = groupsData.groups[groupID];
-        if (!group) throw new ApiError(400, "Group is empty");
+        if (!group) throw new ApiError(400, "Group doesn't exist.");
 
         delete groupsData.groups[groupID];
         if (saveInFile) { this.groupDAO.writeFile(groupsData) }
@@ -111,7 +130,7 @@ export class GroupService {
     public deleteMemberFromGroup(userID:string, groupID:string, groupsData?:GroupsData, saveToFile:boolean=true):boolean {
         if (!groupsData) groupsData = this.groupDAO.readFile();
         let group = groupsData.groups[groupID];
-        if (!group) throw new ApiError(400, "Group doesn't exist.");
+        if (!group) throw new ApiError(404, "Group doesn't exist.");
 
         // Deletes member from group
         const hasBeenDeleted = group.deleteMember(userID);

@@ -55,15 +55,17 @@ export class UserSpotifyService {
         const token_data = SpotifyTokenData.fromObject(spotify_token_data)
 
         if (!token_data || !(token_data.AccessToken || token_data.RefreshToken)) {
-            throw new ApiError(401, "Mes couilles en ski.")
+            throw new ApiError(400, "Wrong Spotify token data format.")
         }
 
         const userProfileResponse = await new SpotifyRequestService().request({method:"get", endpoint:"/me", access_token:token_data.AccessToken});
-        if (!userProfileResponse.data) { throw new ApiError(400, "Spotify token data missing or invalid.") }
 
         // Modifies and updates user data
         this.userService.setSpotifyUserData(user, token_data,userProfileResponse.data.id, userProfileResponse.data.display_name)
-        return user.getSpotifyUserData();
+        return {
+            id: userProfileResponse.data.id,
+            display_name: userProfileResponse.data.display_name
+        }
     }
 
     async getUserSpotifyProfile(user:User) {

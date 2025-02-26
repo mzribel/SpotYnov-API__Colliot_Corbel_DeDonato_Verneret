@@ -1,8 +1,6 @@
 // ---------------------------------------- //
 // ---------- GROUPSDATA (model) ---------- //
 // ---------------------------------------- //
-import {UserDTO} from "./User";
-
 export interface GroupsData {
     auto_increment: number,
     groups: {[key: string]: Group}
@@ -71,6 +69,9 @@ export class Group {
         return userID;
     }
 
+    public toDTO():GroupDTO {
+        return new GroupDTO(this);
+    }
     // ------------- CONVERSIONS -------------- //
     public static fromObject = (obj:Object) => {
         let group:Group = Object.assign(new Group(), obj);
@@ -108,16 +109,19 @@ export class GroupMember {
 // --------- GROUPDTO (... DTO) ----------- //
 // ---------------------------------------- //
 export class GroupDTO {
-    // public id:string
-    // public name:string
-    // public admin_id?:string | null
-    // public members?:UserDTO[]
-    // public member_count?:number
-    //
-    // public constructor(group:Group) {
-    //     this.id = group.Id;
-    //     this.name = group.Name;
-    //     this.admin_id = group.getAdminID ?? null;
-    //     this.member_count = group.members.length;
-    // }
+    public id:string
+    public name:string
+    public admin_id?:string | null
+    public members?:any[]
+    public member_count?:number
+
+    public constructor(group:Group) {
+        this.id = group.Id;
+        this.name = group.Name;
+        this.member_count = group.members.length;
+    }
+    set Members(members:any[]) {
+        this.members = members;
+        this.member_count = undefined;
+    }
 }

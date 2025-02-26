@@ -5,7 +5,7 @@ import { GroupController } from "../controllers/group.controller";
 import {UserService} from "../services/user.service";
 import {UserDAO} from "../daos/user.dao";
 import authRoutes from "./auth.routes";
-import {authMiddleware} from "../middlewares/auth.middleware";
+import {authenticateUser} from "../middlewares/auth.middleware";
 const router = express.Router();
 
 const userDAO = new UserDAO();
@@ -15,15 +15,14 @@ const groupDAO = new GroupDAO();
 const groupService = new GroupService(groupDAO, userService);
 const groupController = new GroupController(groupService);
 
-router.get("/", groupController.getGroupsData);
-router.post("/", authMiddleware, groupController.createGroup);
+router.get("/", authenticateUser, groupController.getGroupsData);
+router.post("/", authenticateUser, groupController.createGroup);
 
-router.get("/:groupId", groupController.getGroupData);
-// router.put("/groups/:groupId", ...);
-// router.delete("/groups/:groupId", ...);
+router.get("/:groupID", authenticateUser, groupController.getGroupData);
+router.delete("/:groupID", authenticateUser, groupController.deleteGroup);
 
-// router.post("/groups/:groupId/members", );
-// router.delete("/groups/:groupId/members", ...);
+router.post("/:groupID/members", authenticateUser, groupController.addGroupMember);
+router.delete("/:groupID/members/:userID", authenticateUser, groupController.deleteGroupMember);
 
 // router.get("/groups/:groupId/synchronize", ...);
 

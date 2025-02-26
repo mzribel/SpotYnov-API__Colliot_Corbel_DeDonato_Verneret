@@ -40,9 +40,6 @@ export class SpotifyAuthController{
 
         let currentUser = this.userService.getUserByIDOrExplode(req.user?.id ?? "")
         const spotifyData = await this.userSpotifyService.linkSpotifyAccount(currentUser, spotify_token)
-        if (!spotifyData) {
-            throw new ApiError(400, "Là jsp quoi dire.");
-        }
 
         ResponseService.handleSuccessResponse(res, {message: `Successfully linked Spotify Account ${spotifyData.display_name} to user ${currentUser.Username}.`});
     }
