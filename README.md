@@ -5,7 +5,7 @@ Rendu du TP 3 du cours de développement back-end par **Théo Colliot-Martinez**
 ## Prérequis 
 
 L'utilisateur doit avoir créé une application Spotify sur le [dashboard](https://developer.spotify.com/dashboard) de son compte personnel et y avoir rempli les champs suivants :
-- **Redirect URI** : `http://localhost:3000/spotify/callback`
+- **Redirect URI** : `http://localhost:3000/auth/spotify/callback`
 - **APIs used** : `Web API`
 
 Une fois créée, l'utilisateur pourra y récupérer son `client ID` et son `client secret` qui seront à renseigner dans le fichier `/SpotYnov_API/.env` 
