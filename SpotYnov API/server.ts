@@ -1,7 +1,5 @@
 import app from'./app';
 import log from './logger';
-import {UserDAO} from "./daos/user.dao";
-import {UserService} from "./services/user.service";
 
 const PORT:string|number = process.env.PORT || 3000;
 

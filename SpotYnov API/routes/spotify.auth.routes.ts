@@ -1,12 +1,11 @@
 import express from 'express';
 const router = express.Router();
 import { SpotifyAuthController } from "../controllers/spotify.auth.controller";
-import { authMiddleware } from "../middlewares/auth.middleware";
+import { authenticateUser } from "../middlewares/auth.middleware";
 import {SpotifyAuthService} from "../services/spotify/spotify.auth.service";
 import {UserService} from "../services/user.service";
 import {UserDAO} from "../daos/user.dao";
 import {SpotifyApiService} from "../services/spotify/spotify.api.service";
-import {SpotifyRequestService} from "../services/spotify/spotify.request.service";
 import {UserSpotifyService} from "../services/user.spotify.service";
 
 // User dependancies
@@ -20,8 +19,8 @@ const userSpotifyService = new UserSpotifyService(userService, spotifyAuthServic
 
 const spotifyAuthController = new SpotifyAuthController(userService, spotifyAuthService, userSpotifyService);
 
-router.get("/auth", authMiddleware, spotifyAuthController.getAuthCodeUrl);
+router.get("/", authenticateUser, spotifyAuthController.getAuthCodeUrl);
 router.get("/callback", spotifyAuthController.handleAuthCodeCallback);
-router.post("/link_account", authMiddleware, spotifyAuthController.linkSpotifyAccount)
-router.get("/unlink_account", authMiddleware, spotifyAuthController.unlinkSpotifyAccount)
+router.post("/link_account", authenticateUser, spotifyAuthController.linkSpotifyAccount)
+router.delete("/unlink_account", authenticateUser, spotifyAuthController.unlinkSpotifyAccount)
 export default router;

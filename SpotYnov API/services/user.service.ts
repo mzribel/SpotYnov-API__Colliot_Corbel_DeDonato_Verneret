@@ -1,5 +1,5 @@
 import User, {UserDTO} from "../models/User";
-import { UserData } from "../models/User";
+import { UsersData } from "../models/User";
 import { isPasswordValid, isUsernameValid } from "../utils/validation.util";
 import { hashPassword } from "../utils/auth.util";
 import { ApiError } from "../utils/error.util";
@@ -10,7 +10,7 @@ export class UserService {
         private userDAO: UserDAO
     ) {}
 
-    public userExists = async (username:string, userData?:UserData):Promise<boolean> => {
+    public userExists = async (username:string, userData?:UsersData):Promise<boolean> => {
         userData ??= this.userDAO.readFile();
 
         return Object.values(userData.users).some((user:User) =>
@@ -19,14 +19,12 @@ export class UserService {
     };
 
     public createUser = async (username:string, password:string):Promise<User> => {
-        username = username.trim();
-
-        // Validate input
-        if (!isUsernameValid(username)) throw new ApiError(400,"Invalid username format")
-        if (!isPasswordValid(password)) throw new ApiError(400, "Invalid password format")
-
         // Check if user exists
         if (await this.userExists(username)) throw new ApiError(409,"A user with this username already exists.");
+
+        // Validate input
+        if (!isUsernameValid(username)) throw new ApiError(400,"Invalid username format.")
+        if (!isPasswordValid(password)) throw new ApiError(400, "Invalid password format.")
 
         // Creates new user
         const newUser = new User(username, hashPassword(password));
@@ -36,7 +34,7 @@ export class UserService {
         return newUser;
     }
 
-    public getUserByUsername = async (username: string, userData?: UserData): Promise<User | null> => {
+    public getUserByUsername = async (username: string, userData?: UsersData): Promise<User | null> => {
         const users = this.userDAO.getAllUsers();
         const user = users.find(user =>
             user.Username.toLowerCase() === username.toLowerCase()
@@ -44,13 +42,13 @@ export class UserService {
         return user ?? null;
     }
 
-    public getUserById = (userID:string, userData?:UserData):User | null => {
+    public getUserById = (userID:string, userData?:UsersData):User | null => {
         const users = this.userDAO.getAllUsers();
 
         const user = users.find((user) => { return user.Id == userID });
         return user ?? null;
     }
-    public getUserDTOById = (userID:string, userData?:UserData):UserDTO | null => {
+    public getUserDTOById = (userID:string, userData?:UsersData):UserDTO | null => {
         return this.getUserById(userID)?.toDTO() ?? null;
     }
 
@@ -61,7 +59,7 @@ export class UserService {
         return this.getUsers().map((user:User) => user.toDTO());
     }
 
-    public getUserByIDOrExplode = (userID:string, userData?:UserData, errorCode:number=400):User => {
+    public getUserByIDOrExplode = (userID:string, userData?:UsersData, errorCode:number=400):User => {
         const user = this.getUserById(userID, userData);
         if (!user) throw new ApiError(errorCode, "User not found");
         return user;
@@ -83,6 +81,9 @@ export class UserService {
     }
 
     public deleteSpotifyUserData = (user:User):void => {
+        if (!user.getSpotifyUserData()) {
+            throw new ApiError(400, "No Spotify account linked to this user.");
+        }
         user.deleteSpotifyData();
         this.userDAO.updateUser(user);
     }

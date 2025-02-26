@@ -12,9 +12,6 @@ export class AuthController {
         // Retrieve username and password
         const username = (req.body.username || "").trim();
         const password = (req.body.password || "");
-        if (!username || !password) {
-            throw new ApiError(400, "Username and password are required.")
-        }
 
         // User creation
         let newUser:User = await this.userService.createUser(username, password);
@@ -36,15 +33,16 @@ export class AuthController {
 
         let user:User | undefined = await this.userService.getUserByUsername(username) as User;
         if (!user || !user.checkPassword(password)) {
-            throw new ApiError(401, "Wrong username or password.")
+            throw new ApiError(401, "Incorrect username or password.")
         }
 
         let response = {
             "message": `User ${user.Username} has successfully been logged in.`,
+            // TODO : access_token plus précis
             "access_token": generateAccessToken(user.Username, user.Id)
         }
 
-        ResponseService.handleSuccessResponse(res, response, 201)
+        ResponseService.handleSuccessResponse(res, response, 200)
     }
 }
 

@@ -2,11 +2,18 @@ import { hashPassword } from "../utils/auth.util";
 import {SpotifyTokenData, SpotifyData} from "./SpotifyData";
 import {ApiError} from "../utils/error.util";
 
+
+// ---------------------------------------- //
+// ----------- USERDATA (model) ----------- //
+// ---------------------------------------- //
 export interface UsersData {
     auto_increment: number,
     users: {[key: string]: User}
 }
 
+// ---------------------------------------- //
+// ------------- USER (model) ------------- //
+// ---------------------------------------- //
 export class User {
     private id:string;
     private username:string;
@@ -75,33 +82,11 @@ export class User {
         return !(!this.spotify_data?.token_data);     // LMAO j'ai oublié comment on fait
     }
 
-    // public setSpotifyData(spotify_id:string|undefined, spotify_display_name:string|undefined, spotify_token:object
-    //     |undefined) {
-    //     this.spotify_id = spotify_id;
-    //     this.spotify_display_name = spotify_display_name;
-    //     this.spotify_token_data = SpotifyTokenData.fromObject(spotify_token);
-    // }
-    //
-    // public refreshSpotifyToken(newSpotifyToken:SpotifyTokenData) {
-    //     // No Spotify token beforehand
-    //     if (!this.spotify_token_data) {
-    //         this.spotify_token_data = newSpotifyToken;
-    //         return;
-    //     }
-    //
-    //     // New token doesn't have a new refresh token : keep the one stored
-    //     if (!newSpotifyToken.refreshToken) {
-    //         newSpotifyToken.refreshToken = this.spotify_token_data.refreshToken
-    //     }
-    //
-    //     // Replace token
-    //     this.spotify_token_data = newSpotifyToken;
-    // }
-
     public checkPassword(password:string):boolean {
         return this.password == hashPassword(password)
     }
 
+    // ------------- CONVERSIONS -------------- //
     public toDTO = ():UserDTO => {
         let spotify_data_dto = this.spotify_data ?
             { id: this.spotify_data.id, display_name: this.spotify_data.display_name} :
@@ -114,19 +99,14 @@ export class User {
         if (!user.spotify_data || !user.spotify_data.token_data) { return user; }
 
         user.spotify_data.token_data = SpotifyTokenData.fromObject(user.spotify_data.token_data)
-
-        // If ?
-
         return user;
     }
-
 }
 
-export interface UserData {
-    auto_increment: number,
-    users: {[key: string]: User}
-}
 
+// ---------------------------------------- //
+// ---------- USERDTO (... DTO) ----------- //
+// ---------------------------------------- //
 export class UserDTO {
     public id:string
     public username:string
@@ -134,13 +114,18 @@ export class UserDTO {
         id:string,
         display_name:string,
     }
-    public constructor(id:string,username:string, spotify_data?:{id:string,display_name:string,}) {
+    public constructor(id:string,username:string, spotify_data?:{id:string,display_name:string}) {
         this.id = id;
         this.username = username;
-        this.spotify_data=spotify_data
+        this.spotify_data = spotify_data
+    }
+
+    public static fromUser(user:UserDTO) {
+        let spotify_data_dto = user.spotify_data ?
+            { id: user.spotify_data.id, display_name: user.spotify_data.display_name} :
+            undefined;
+        return new UserDTO(user.id, user.username, spotify_data_dto);
     }
 }
-
-
 
 export default User;
