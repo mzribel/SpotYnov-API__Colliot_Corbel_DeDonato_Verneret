@@ -8,20 +8,8 @@ import { SpotifyRequestService} from "./spotify/spotify.request.service";
 import { AxiosError } from "axios";
 import {SpotifyTokenData} from "../models/SpotifyData";
 import {msDurationToString} from "../utils/format.util";
-
-// TODO : doesn't belong here (mapper)
-interface TrackInfoDTO {
-    name:string,
-    album: {
-        name:string,
-        image_url:string,
-    },
-    artists:string[],
-    release_date:string,
-    duration_ms:number,
-    uri:string,
-    popularity:number,
-}
+import { SpotifyTrackDTO } from "../dtos/spotify.track.dto"
+import {SpotifyUserDTO} from "../dtos/spotify.user.dto";
 
 // Mediator Service
 export class UserSpotifyService {
@@ -72,9 +60,12 @@ export class UserSpotifyService {
             throw new ApiError(400, "Wrong Spotify token data format.")
         }
 
-        const userProfileResponse = await new SpotifyRequestService().request({method:"get", endpoint:"/me", access_token:token_data.AccessToken});
+        // Modifies but **doesn't save** user data and retrieves Spotify Profile.
+        // We retrieve the profile to check the token validity!
+        user.setSpotifyToken(token_data);
+        const userProfileResponse = await this.getUserSpotifyProfile(user);
 
-        // Modifies and updates user data
+        // If profile has successfully been retrieved, we save the token in json file.
         this.userService.setSpotifyUserData(user, token_data,userProfileResponse.data.id, userProfileResponse.data.display_name)
         return {
             id: userProfileResponse.data.id,
@@ -89,42 +80,24 @@ export class UserSpotifyService {
     async getUserSpotifyCurrentlyPlayingTrack(user:User) {
         return this.userRequest(user, (token:string) => this.spotifyApiService.getSpotifyCurrentlyPlayingTrack(token))
     }
-    async requestSavedTracks(user:User, offset=0, limit=50) {
-        return this.userRequest(user, (token:string) => this.spotifyApiService.getSavedTracks(token, offset, limit))
+    async requestSavedTracks(user:User, offset=0, limit=50):Promise<any> {
+        return this.userRequest(user, (token:string):Promise<any> => this.spotifyApiService.getSavedTracks(token, offset, limit))
     }
 
-    public  mapSpotifyTrack(data: any): TrackInfoDTO {
-        return {
-            name: data.name,
-            album: {
-                name: data.album.name,
-                image_url: data.album.images[0]?.url ?? ""
-            },
-            artists: (data.artists as any[]).map((artist: any) => artist.name),
-            release_date: data.album.release_date,
-            duration_ms: data.duration_ms,
-            popularity: data.popularity,
-            uri: data.uri,
-        };
-    }
-
-    async getAllSavedTracks(user:User, limitPerRequest=50):Promise<TrackInfoDTO[]> {
-        let savedTracks:TrackInfoDTO[] = [];
+    async getAllSavedTracks(user:User, limitPerRequest=50):Promise<SpotifyTrackDTO[]> {
+        let savedTracks:SpotifyTrackDTO[] = [];
 
         let data = await this.requestSavedTracks(user);
-        if (!data || !data.items) { throw new ApiError(404, "User has not liked any track."); }
+        if (!data.items) { throw new ApiError(404, "User has not liked any track."); }
 
         let offset:number = 0;
         while(true) {
-            (data.items as any[]).forEach((item: any) => {
-                savedTracks.push(this.mapSpotifyTrack(item.track));
-            });
+            savedTracks = savedTracks.concat(data.items);
 
             if (!data.next) { break; }
             offset+= limitPerRequest;
             data = await this.requestSavedTracks(user, offset, limitPerRequest);
         }
-
         return savedTracks;
     }
 
@@ -147,12 +120,12 @@ export class UserSpotifyService {
 
     async synchronizePlayers(from_user:User, to_users:User[]) {
         const from_user_data = await this.getUserSpotifyCurrentlyPlayingTrack(from_user);
-        if (!from_user_data || !from_user_data.item) {
+        if (!from_user_data || !from_user_data.track) {
             throw new ApiError(400, "User player is not active at the moment.")
         }
 
         const progress_ms:number = from_user_data.progress_ms;
-        const uri:string = from_user_data.item.uri;
+        const uri:string = from_user_data.track.uri;
 
         for (const user of to_users) {
             if (user.Id == from_user.Id) continue;
