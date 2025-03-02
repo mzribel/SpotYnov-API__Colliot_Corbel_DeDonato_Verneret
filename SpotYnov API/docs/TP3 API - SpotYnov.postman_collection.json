@@ -51,7 +51,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\":\"login\",\r\n    \"password\":\"password!\"\r\n}",
+							"raw": "{\r\n    \"username\":\"username\",\r\n    \"password\":\"password\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -80,7 +80,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhdGhnYXRlIiwiaWQiOiIxIiwiaWF0IjoxNzQwNTk4MzE4LCJleHAiOjE3NDA2ODQ3MTh9.BZXN9v7ppXkWPrWZVdL-_dDGJmMWafs5XZLBnwvWWpE",
+								"value": "Bearer <token>",
 								"type": "text"
 							}
 						],
@@ -163,7 +163,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhdGhnYXRlIiwiaWQiOiIxIiwiaWF0IjoxNzQwNTk4MzE4LCJleHAiOjE3NDA2ODQ3MTh9.BZXN9v7ppXkWPrWZVdL-_dDGJmMWafs5XZLBnwvWWpE",
+								"value": "Bearer <token>",
 								"type": "text"
 							}
 						],
@@ -343,7 +343,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/users/1/spotify/profile",
+							"raw": "http://localhost:3000/users/[id]/spotify/profile",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -351,7 +351,7 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"1",
+								"[id]",
 								"spotify",
 								"profile"
 							]
@@ -371,7 +371,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/users/1/spotify/currently_playing",
+							"raw": "http://localhost:3000/users/[id]/spotify/currently_playing",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -379,7 +379,7 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"1",
+								"[id]",
 								"spotify",
 								"currently_playing"
 							]
@@ -408,7 +408,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/users/1/spotify/play",
+							"raw": "http://localhost:3000/users/[id]/spotify/play",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -416,7 +416,7 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"1",
+								"[id]",
 								"spotify",
 								"play"
 							]
@@ -436,7 +436,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/users/1/spotify/saved_tracks/",
+							"raw": "http://localhost:3000/users/[id]/spotify/saved_tracks/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -444,10 +444,38 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"1",
+								"[id]",
 								"spotify",
 								"saved_tracks",
 								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/[id]/spotify/top_tracks",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhdGhnYXRlIiwiaWQiOiIxIiwiaWF0IjoxNzQwOTU1NDk0LCJleHAiOjE3NDEwNDE4OTR9.qly8vZRgGl7OGIkHDSBIKFedgq3YpVhp2khqPtI7438",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/users/[id]/spotify/top_tracks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"[id]",
+								"spotify",
+								"top_tracks"
 							]
 						}
 					},
@@ -465,7 +493,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/users/6/spotify/saved_tracks/personality",
+							"raw": "http://localhost:3000/users/[id]/spotify/saved_tracks/personality",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -473,10 +501,76 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"6",
+								"[id]",
 								"spotify",
 								"saved_tracks",
 								"personality"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/[id]/spotify/playlists",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/users/[id]/spotify/playlists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"[id]",
+								"spotify",
+								"playlists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/[id]/spotify/playlists/[id]/",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uris\": [ \"spotify:track:2nOQ1oLbtnIQGC77yKLEON\" ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/[id]/spotify/playlists/[id]",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"[id]",
+								"spotify",
+								"playlists",
+								"[id]"
 							]
 						}
 					},
@@ -770,22 +864,22 @@
 			"name": "TODO",
 			"item": [
 				{
-					"name": "/users/[id]/playlists/from-top-tracks",
+					"name": "/groups/[id]/playlists/from_top_tracks",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/users/[id]/playlists/from-top-tracks",
+							"raw": "http://localhost:3000/groups/[id]/playlists/from_top_tracks",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"users",
+								"groups",
 								"[id]",
 								"playlists",
-								"from-top-tracks"
+								"from_top_tracks"
 							]
 						}
 					},
@@ -799,14 +893,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/test",
+					"raw": "http://localhost:3000/route_vers_le_coeur_de_tony",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"test"
+						"route_vers_le_coeur_de_tony"
 					]
 				}
 			},
