@@ -91,4 +91,8 @@ export class GroupController {
 
         ResponseService.handleSuccessResponse(res, null, 204)
     }
+
+    public createPlaylistFromMembersTopTracks = async (req: Request, res: Response, next: NextFunction) => {
+
+    }
 }

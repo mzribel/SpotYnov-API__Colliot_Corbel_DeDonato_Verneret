@@ -63,17 +63,14 @@ export class UserSpotifyService {
         // Modifies but **doesn't save** user data and retrieves Spotify Profile.
         // We retrieve the profile to check the token validity!
         user.setSpotifyToken(token_data);
-        const userProfileResponse = await this.getUserSpotifyProfile(user);
+        const user_data = await this.getUserSpotifyProfile(user);
 
         // If profile has successfully been retrieved, we save the token in json file.
-        this.userService.setSpotifyUserData(user, token_data,userProfileResponse.data.id, userProfileResponse.data.display_name)
-        return {
-            id: userProfileResponse.data.id,
-            display_name: userProfileResponse.data.display_name
-        }
+        this.userService.setSpotifyUserData(user, token_data,user_data.id, user_data.display_name)
+        return user_data;
     }
 
-    async getUserSpotifyProfile(user:User) {
+    async getUserSpotifyProfile(user:User): Promise<SpotifyUserDTO> {
         return this.userRequest(user, (token) => this.spotifyApiService.getSpotifyProfile(token))
     }
 
@@ -99,6 +96,9 @@ export class UserSpotifyService {
             data = await this.requestSavedTracks(user, offset, limitPerRequest);
         }
         return savedTracks;
+    }
+    async requestTopTracks(user:User, limit:number=50, offset:number=0):Promise<SpotifyTrackDTO[]> {
+        return this.userRequest(user, (token:string):Promise<any> => this.spotifyApiService.getTopTracks(token, offset, limit))
     }
 
     async getUserPersonalityFromSavedTracks(user:User) {
@@ -131,6 +131,16 @@ export class UserSpotifyService {
             if (user.Id == from_user.Id) continue;
             await this.playTracks(user, [uri], progress_ms).catch(()=>{});
         }
+    }
+
+    async createUserPlaylist(user:User, name?:string, description?:string) {
+        const user_data = await this.getUserSpotifyProfile(user);
+        name = (name ?? "").trim() ?? `${user.Username}'s playlist`
+        return this.userRequest(user, (token:string) => this.spotifyApiService.createPlaylist(token, user_data.id, name, description))
+    }
+
+    async addToUserPlaylist(user:User, playlist_id:string, uris:string[]) {
+        return this.userRequest(user, (token:string) => this.spotifyApiService.addToPlaylist(token, playlist_id, uris))
     }
 }
 

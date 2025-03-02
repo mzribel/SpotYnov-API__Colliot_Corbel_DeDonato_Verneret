@@ -50,6 +50,44 @@ export class SpotifyApiService {
         })
         return response.data;
     }
+    async getTopTracks(access_token:string, offset=0, limit=20, time_range:"short_term"|"medium_term"|"long_term"="medium_term") {
+        const response = await this.spotifyRequestService.request({
+            method:"get",
+            endpoint:"/me/top/tracks",
+            access_token,
+            params: {
+                offset:offset, limit:limit, time_range
+            }});
+        const items = response.data.items as any[];
+        return items.map((item:any) => {
+            return SpotifyTrackDTO.fromSpotifyTrackObject(item);
+        })
+    }
+
+    async createPlaylist(access_token:string, user_id:string, name:string, description?:string) {
+        const response = await this.spotifyRequestService.request({
+            method:"post",
+            endpoint: `/users/${user_id}/playlists`,
+            access_token,
+            body: {
+                name,
+                description
+            }
+        })
+        return response.data;
+    }
+
+    async addToPlaylist(access_token:string, playlist_id:string, uris:string[]) {
+        const response = await this.spotifyRequestService.request({
+            method:"post",
+            endpoint: `/playlists/${playlist_id}/tracks`,
+            access_token,
+            body: {
+                uris
+            }
+        })
+        return response.data;
+    }
 }
 
 

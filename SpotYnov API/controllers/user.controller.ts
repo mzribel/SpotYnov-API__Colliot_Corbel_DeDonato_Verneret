@@ -44,6 +44,15 @@ export class UserController {
         const data = await this.userSpotifyService.getAllSavedTracks(user);
         ResponseService.handleSuccessResponse(res, data)
     }
+
+    public getUserSpotifyTopTracks = async (req: Request, res: Response, next: NextFunction) => {
+        const user = this.userService.getUserByIDOrExplode(req.params.userID);
+        if (req.user?.id != user.Id) { throw new ApiError(403, "A user can only access their own Spotify data.") }
+
+        const data = await this.userSpotifyService.requestTopTracks(user);
+        ResponseService.handleSuccessResponse(res, data)
+    }
+
     public getUserPersonalityFromSavedTracks = async (req: Request, res: Response, next: NextFunction) => {
         const user = this.userService.getUserByIDOrExplode(req.params.userID);
         const data = await this.userSpotifyService.getUserPersonalityFromSavedTracks(user);
@@ -62,5 +71,24 @@ export class UserController {
 
         await this.userSpotifyService.playTracks(user, uris, progress_ms);
         ResponseService.handleSuccessResponse(res, null, 204)
+    }
+
+    public createSpotifyPlaylist = async (req: Request, res: Response, next: NextFunction) => {
+        const user = this.userService.getUserByIDOrExplode(req.params.userID);
+
+        if (req.user?.id != user.Id) {
+            throw new ApiError(403, "A user can only create a playlist on their own account.")
+        }
+
+        const response = await this.userSpotifyService.createUserPlaylist(user, "Mes couilles en ski", "tony jtm")
+        ResponseService.handleSuccessResponse(res, response, 201)
+    }
+
+    public addToUserPlaylist = async (req: Request, res: Response, next: NextFunction) => {
+        const user = this.userService.getUserByIDOrExplode(req.params.userID);
+        const uris:string[] = req.body.uris;
+        const playlistID = req.params.playlistID;
+        const response = await this.userSpotifyService.addToUserPlaylist(user, playlistID, uris)
+        ResponseService.handleSuccessResponse(res, response, 201)
     }
 }
