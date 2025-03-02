@@ -30,6 +30,17 @@ export class SpotifyApiService {
         })
         return response.data;
     }
+
+    async getSavedTracks(access_token:string, offset=0, limit=50) {
+        const response = await this.spotifyRequestService.request({
+            method:"get",
+            endpoint:"/me/tracks",
+            access_token,
+            params: {
+                offset, limit
+            }});
+        return response.data;
+    }
 }
 
 

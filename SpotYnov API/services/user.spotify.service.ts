@@ -7,6 +7,21 @@ import { SpotifyApiService } from "./spotify/spotify.api.service";
 import { SpotifyRequestService} from "./spotify/spotify.request.service";
 import { AxiosError } from "axios";
 import {SpotifyTokenData} from "../models/SpotifyData";
+import {msDurationToString} from "../utils/format.util";
+
+// TODO : doesn't belong here (mapper)
+interface TrackInfoDTO {
+    name:string,
+    album: {
+        name:string,
+        image_url:string,
+    },
+    artists:string[],
+    release_date:string,
+    duration_ms:number,
+    uri:string,
+    popularity:number,
+}
 
 // Mediator Service
 export class UserSpotifyService {
@@ -73,6 +88,56 @@ export class UserSpotifyService {
 
     async getUserSpotifyCurrentlyPlayingTrack(user:User) {
         return this.userRequest(user, (token:string) => this.spotifyApiService.getSpotifyCurrentlyPlayingTrack(token))
+    }
+    async requestSavedTracks(user:User, offset=0, limit=50) {
+        return this.userRequest(user, (token:string) => this.spotifyApiService.getSavedTracks(token, offset, limit))
+    }
+
+    public  mapSpotifyTrack(data: any): TrackInfoDTO {
+        return {
+            name: data.name,
+            album: {
+                name: data.album.name,
+                image_url: data.album.images[0]?.url ?? ""
+            },
+            artists: (data.artists as any[]).map((artist: any) => artist.name),
+            release_date: data.album.release_date,
+            duration_ms: data.duration_ms,
+            popularity: data.popularity,
+            uri: data.uri,
+        };
+    }
+
+    async getAllSavedTracks(user:User, limitPerRequest=50):Promise<TrackInfoDTO[]> {
+        let savedTracks:TrackInfoDTO[] = [];
+
+        let data = await this.requestSavedTracks(user);
+        if (!data || !data.items) { throw new ApiError(404, "User has not liked any track."); }
+
+        let offset:number = 0;
+        while(true) {
+            (data.items as any[]).forEach((item: any) => {
+                savedTracks.push(this.mapSpotifyTrack(item.track));
+            });
+
+            if (!data.next) { break; }
+            offset+= limitPerRequest;
+            data = await this.requestSavedTracks(user, offset, limitPerRequest);
+        }
+
+        return savedTracks;
+    }
+
+    async getUserPersonalityFromSavedTracks(user:User) {
+        const tracks = await this.getAllSavedTracks(user);
+        const avg_duration_ms = Math.round(tracks.reduce((acc: any, track: any) => acc+track.duration_ms, 0) / tracks.length)
+
+        return {
+            count: tracks.length,
+            avg_popularity: +(tracks.reduce((acc: any, track: any) => acc+track.popularity, 0) / tracks.length).toFixed(2),
+            avg_duration_ms: avg_duration_ms,
+            avg_duration: msDurationToString(avg_duration_ms)
+        }
     }
 
     async playTracks(user:User, uris:string[], progress_ms:number) {

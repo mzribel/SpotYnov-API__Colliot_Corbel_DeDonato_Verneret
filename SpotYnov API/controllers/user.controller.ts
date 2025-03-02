@@ -37,6 +37,18 @@ export class UserController {
         const data = await this.userSpotifyService.getUserSpotifyCurrentlyPlayingTrack(user);
         ResponseService.handleSuccessResponse(res, data)
     }
+    public getUserSpotifySavedTracks = async (req: Request, res: Response, next: NextFunction) => {
+        const user = this.userService.getUserByIDOrExplode(req.params.userID);
+        if (req.user?.id != user.Id) { throw new ApiError(403, "A user can only access their own Spotify data.") }
+
+        const data = await this.userSpotifyService.getAllSavedTracks(user);
+        ResponseService.handleSuccessResponse(res, data)
+    }
+    public getUserPersonalityFromSavedTracks = async (req: Request, res: Response, next: NextFunction) => {
+        const user = this.userService.getUserByIDOrExplode(req.params.userID);
+        const data = await this.userSpotifyService.getUserPersonalityFromSavedTracks(user);
+        ResponseService.handleSuccessResponse(res, data)
+    }
 
     public playTracks = async (req: Request, res: Response, next: NextFunction) => {
         const user = this.userService.getUserByIDOrExplode(req.params.userID);
