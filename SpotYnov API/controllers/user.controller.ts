@@ -27,8 +27,28 @@ export class UserController {
     }
 
     public getSpotifyUserProfile = async (req: Request, res: Response, next: NextFunction) => {
-        const user = this.userService.getUserByIDOrExplode(req.user?.id ?? "");
+        const user = this.userService.getUserByIDOrExplode(req.params.userID);
         const data = await this.userSpotifyService.getUserSpotifyProfile(user);
         ResponseService.handleSuccessResponse(res, data)
+    }
+
+    public getUserSpotifyCurrentlyPlayingTrack = async (req: Request, res: Response, next: NextFunction) => {
+        const user = this.userService.getUserByIDOrExplode(req.params.userID);
+        const data = await this.userSpotifyService.getUserSpotifyCurrentlyPlayingTrack(user);
+        ResponseService.handleSuccessResponse(res, data)
+    }
+
+    public playTracks = async (req: Request, res: Response, next: NextFunction) => {
+        const user = this.userService.getUserByIDOrExplode(req.params.userID);
+
+        if (req.user?.id != user.Id) {
+            throw new ApiError(403, "A user can only modify their own Spotify player.")
+        }
+
+        const uris:string[] = req.body.uris;
+        const progress_ms:number = req.body.progress_ms ?? 0;
+
+        await this.userSpotifyService.playTracks(user, uris, progress_ms);
+        ResponseService.handleSuccessResponse(res, null, 204)
     }
 }

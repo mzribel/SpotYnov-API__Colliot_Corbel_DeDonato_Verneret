@@ -3,12 +3,13 @@ import {ApiError} from "../utils/error.util";
 import {ResponseService} from "../services/api/response.service";
 import {GroupService} from "../services/group.service";
 import {Group, GroupDTO} from "../models/Group";
+import {GroupSpotifyService} from "../services/group.spotify.service";
 
 export class GroupController {
     // Dependancy Injection
     constructor(
         private groupService:GroupService,
-        // private userSpotifyService:UserSpotifyService
+        private groupSpotifyService:GroupSpotifyService
     ) {}
 
     public getGroupData = async (req: Request, res: Response, next: NextFunction) => {
@@ -77,6 +78,19 @@ export class GroupController {
         this.groupService.deleteMemberFromGroup(user_id, group_id);
         ResponseService.handleSuccessResponse(res, {
             message:`Successfully deleted user from group ${group.Id} (${group.Name}).`
+        })
+    }
+
+    public synchronizePlayers = async (req: Request, res: Response, next: NextFunction) => {
+        const group = this.groupService.getGroupByID(req.params.groupID);
+
+        if (!group) { throw new ApiError(400, "Group doesn't exist.") }
+        if (group.getAdminID != (req.user?.id ?? "")) { throw new ApiError(403, "Only a group admin can start synchronization.") }
+
+
+
+        ResponseService.handleSuccessResponse(res, {
+            message:`Should sync`
         })
     }
 }

@@ -4,16 +4,30 @@ import { GroupService } from "../services/group.service";
 import { GroupController } from "../controllers/group.controller";
 import {UserService} from "../services/user.service";
 import {UserDAO} from "../daos/user.dao";
-import authRoutes from "./auth.routes";
 import {authenticateUser} from "../middlewares/auth.middleware";
+import {UserSpotifyService} from "../services/user.spotify.service";
+import {SpotifyAuthService} from "../services/spotify/spotify.auth.service";
+import {SpotifyApiService} from "../services/spotify/spotify.api.service";
+import {GroupSpotifyService} from "../services/group.spotify.service";
 const router = express.Router();
 
+// User DAO & Service
 const userDAO = new UserDAO();
 const userService = new UserService(userDAO);
+// Spotify Services
+const spotifyAuthService = new SpotifyAuthService();
+const spotifyApiService = new SpotifyApiService();
+// User & Spotify Service
+const userSpotifyService = new UserSpotifyService(userService, spotifyAuthService, spotifyApiService);
 
+// Group DAO & Service
 const groupDAO = new GroupDAO();
 const groupService = new GroupService(groupDAO, userService);
-const groupController = new GroupController(groupService);
+// Group & Spotify Service
+const groupSpotifyService = new GroupSpotifyService(groupService, userSpotifyService);
+
+// Controller
+const groupController = new GroupController(groupService, groupSpotifyService);
 
 router.get("/", authenticateUser, groupController.getGroupsData);
 router.post("/", authenticateUser, groupController.createGroup);
@@ -24,6 +38,6 @@ router.delete("/:groupID", authenticateUser, groupController.deleteGroup);
 router.post("/:groupID/members", authenticateUser, groupController.addGroupMember);
 router.delete("/:groupID/members/:userID", authenticateUser, groupController.deleteGroupMember);
 
-// router.get("/groups/:groupId/synchronize", ...);
+router.get("/groups/:groupId/spotify/synchronize", groupController.synchronizePlayers);
 
 export default router;

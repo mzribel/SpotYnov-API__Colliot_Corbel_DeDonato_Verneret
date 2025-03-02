@@ -8,6 +8,7 @@ export const handleErrors = (err:Error|ApiError, req:Request, res:Response, next
     if (err instanceof ApiError) {
         return ResponseService.handleErrorResponse(res, err.statusCode, err.message);
     } else if (err instanceof AxiosError) {
+        console.log(err)
         return ResponseService.handleErrorResponse(res, err.status ?? 500, "Spotify Error : "+err.message);
     }
     console.log(err)

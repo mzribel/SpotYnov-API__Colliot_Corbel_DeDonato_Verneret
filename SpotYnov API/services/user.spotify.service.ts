@@ -21,8 +21,7 @@ export class UserSpotifyService {
         requestFn:(token:string, ...args:any[]) => Promise<any>,
         ...args:[]): Promise<any> {
 
-        // TODO : L'utilisateur n'a pas de données de token spotify
-        if (!user.spotify_data?.token_data) { throw new ApiError(6969, "jsp") }
+        if (!user.spotify_data?.token_data) { throw new ApiError(403, "User has not linked any Spotify account.") }
 
         try {
             return await requestFn(user.SpotifyAccessToken, ...args);
@@ -70,6 +69,15 @@ export class UserSpotifyService {
 
     async getUserSpotifyProfile(user:User) {
         return this.userRequest(user, (token) => this.spotifyApiService.getSpotifyProfile(token))
+    }
+
+    async getUserSpotifyCurrentlyPlayingTrack(user:User) {
+        return this.userRequest(user, (token:string) => this.spotifyApiService.getSpotifyCurrentlyPlayingTrack(token))
+    }
+
+    async playTracks(user:User, uris:string[], progress_ms:number) {
+        if (!uris) { throw new ApiError(400, "At least one track must be specified.") }
+        return this.userRequest(user, (token:string) => this.spotifyApiService.startPlayingTracks(token, uris, progress_ms))
     }
 }
 

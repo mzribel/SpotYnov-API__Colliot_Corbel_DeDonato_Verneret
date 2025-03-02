@@ -43,7 +43,6 @@ export class GroupService {
     public createGroup = (groupname:string, adminID:string, groupsData?:GroupsData, saveToFile:boolean=true) => {
         if (!groupsData) groupsData = this.groupDAO.readFile();
         let adminUser = this.userService.getUserById(adminID);
-        console.log(adminUser, groupname);
         if (!adminUser) throw new ApiError(400, "User doesn't exist.");
 
         groupname = groupname.trim();
