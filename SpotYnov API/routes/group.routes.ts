@@ -38,6 +38,6 @@ router.delete("/:groupID", authenticateUser, groupController.deleteGroup);
 router.post("/:groupID/members", authenticateUser, groupController.addGroupMember);
 router.delete("/:groupID/members/:userID", authenticateUser, groupController.deleteGroupMember);
 
-router.get("/groups/:groupId/spotify/synchronize", groupController.synchronizePlayers);
+router.get("/:groupID/spotify/synchronize", authenticateUser, groupController.synchronizePlayers);
 
 export default router;

@@ -79,6 +79,21 @@ export class UserSpotifyService {
         if (!uris) { throw new ApiError(400, "At least one track must be specified.") }
         return this.userRequest(user, (token:string) => this.spotifyApiService.startPlayingTracks(token, uris, progress_ms))
     }
+
+    async synchronizePlayers(from_user:User, to_users:User[]) {
+        const from_user_data = await this.getUserSpotifyCurrentlyPlayingTrack(from_user);
+        if (!from_user_data || !from_user_data.item) {
+            throw new ApiError(400, "User player is not active at the moment.")
+        }
+
+        const progress_ms:number = from_user_data.progress_ms;
+        const uri:string = from_user_data.item.uri;
+
+        for (const user of to_users) {
+            if (user.Id == from_user.Id) continue;
+            await this.playTracks(user, [uri], progress_ms).catch(()=>{});
+        }
+    }
 }
 
 

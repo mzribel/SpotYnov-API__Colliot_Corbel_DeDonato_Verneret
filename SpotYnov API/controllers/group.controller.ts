@@ -87,7 +87,7 @@ export class GroupController {
         if (!group) { throw new ApiError(400, "Group doesn't exist.") }
         if (group.getAdminID != (req.user?.id ?? "")) { throw new ApiError(403, "Only a group admin can start synchronization.") }
 
-
+        await this.groupSpotifyService.synchronizePlayers(group);
 
         ResponseService.handleSuccessResponse(res, {
             message:`Should sync`
