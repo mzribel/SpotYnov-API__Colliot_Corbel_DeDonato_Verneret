@@ -7,6 +7,9 @@ import { SpotifyApiService } from "./spotify/spotify.api.service";
 import { SpotifyRequestService} from "./spotify/spotify.request.service";
 import { AxiosError } from "axios";
 import {SpotifyTokenData} from "../models/SpotifyData";
+import {msDurationToString} from "../utils/format.util";
+import { SpotifyTrackDTO } from "../dtos/spotify.track.dto"
+import {SpotifyUserDTO} from "../dtos/spotify.user.dto";
 
 // Mediator Service
 export class UserSpotifyService {
@@ -21,8 +24,7 @@ export class UserSpotifyService {
         requestFn:(token:string, ...args:any[]) => Promise<any>,
         ...args:[]): Promise<any> {
 
-        // TODO : L'utilisateur n'a pas de données de token spotify
-        if (!user.spotify_data?.token_data) { throw new ApiError(6969, "jsp") }
+        if (!user.spotify_data?.token_data) { throw new ApiError(403, "User has not linked any Spotify account.") }
 
         try {
             return await requestFn(user.SpotifyAccessToken, ...args);
@@ -58,9 +60,12 @@ export class UserSpotifyService {
             throw new ApiError(400, "Wrong Spotify token data format.")
         }
 
-        const userProfileResponse = await new SpotifyRequestService().request({method:"get", endpoint:"/me", access_token:token_data.AccessToken});
+        // Modifies but **doesn't save** user data and retrieves Spotify Profile.
+        // We retrieve the profile to check the token validity!
+        user.setSpotifyToken(token_data);
+        const userProfileResponse = await this.getUserSpotifyProfile(user);
 
-        // Modifies and updates user data
+        // If profile has successfully been retrieved, we save the token in json file.
         this.userService.setSpotifyUserData(user, token_data,userProfileResponse.data.id, userProfileResponse.data.display_name)
         return {
             id: userProfileResponse.data.id,
@@ -70,6 +75,62 @@ export class UserSpotifyService {
 
     async getUserSpotifyProfile(user:User) {
         return this.userRequest(user, (token) => this.spotifyApiService.getSpotifyProfile(token))
+    }
+
+    async getUserSpotifyCurrentlyPlayingTrack(user:User) {
+        return this.userRequest(user, (token:string) => this.spotifyApiService.getSpotifyCurrentlyPlayingTrack(token))
+    }
+    async requestSavedTracks(user:User, offset=0, limit=50):Promise<any> {
+        return this.userRequest(user, (token:string):Promise<any> => this.spotifyApiService.getSavedTracks(token, offset, limit))
+    }
+
+    async getAllSavedTracks(user:User, limitPerRequest=50):Promise<SpotifyTrackDTO[]> {
+        let savedTracks:SpotifyTrackDTO[] = [];
+
+        let data = await this.requestSavedTracks(user);
+        if (!data.items) { throw new ApiError(404, "User has not liked any track."); }
+
+        let offset:number = 0;
+        while(true) {
+            savedTracks = savedTracks.concat(data.items);
+
+            if (!data.next) { break; }
+            offset+= limitPerRequest;
+            data = await this.requestSavedTracks(user, offset, limitPerRequest);
+        }
+        return savedTracks;
+    }
+
+    async getUserPersonalityFromSavedTracks(user:User) {
+        const tracks = await this.getAllSavedTracks(user);
+        const avg_duration_ms = Math.round(tracks.reduce((acc: any, track: any) => acc+track.duration_ms, 0) / tracks.length)
+
+        return {
+            count: tracks.length,
+            avg_popularity: +(tracks.reduce((acc: any, track: any) => acc+track.popularity, 0) / tracks.length).toFixed(2),
+            avg_duration_ms: avg_duration_ms,
+            avg_duration: msDurationToString(avg_duration_ms)
+        }
+    }
+
+    async playTracks(user:User, uris:string[], progress_ms:number) {
+        if (!uris) { throw new ApiError(400, "At least one track must be specified.") }
+        return this.userRequest(user, (token:string) => this.spotifyApiService.startPlayingTracks(token, uris, progress_ms))
+    }
+
+    async synchronizePlayers(from_user:User, to_users:User[]) {
+        const from_user_data = await this.getUserSpotifyCurrentlyPlayingTrack(from_user);
+        if (!from_user_data || !from_user_data.track) {
+            throw new ApiError(400, "User player is not active at the moment.")
+        }
+
+        const progress_ms:number = from_user_data.progress_ms;
+        const uri:string = from_user_data.track.uri;
+
+        for (const user of to_users) {
+            if (user.Id == from_user.Id) continue;
+            await this.playTracks(user, [uri], progress_ms).catch(()=>{});
+        }
     }
 }
 

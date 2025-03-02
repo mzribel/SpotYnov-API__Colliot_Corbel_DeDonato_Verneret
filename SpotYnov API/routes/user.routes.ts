@@ -23,6 +23,9 @@ router.get("/:userID/", authenticateUser, userController.getUserData)
 // router.post("/users/:userId/playlists/from-top-tracks", ...);
 
 // Todo: Remove this route (placeholder for spotify data)
-router.get("/me/spotify_profile", authenticateUser, userController.getSpotifyUserProfile)
-
+router.get("/:userID/spotify/profile", authenticateUser, userController.getSpotifyUserProfile)
+router.get("/:userID/spotify/currently_playing", authenticateUser, userController.getUserSpotifyCurrentlyPlayingTrack)
+router.put("/:userID/spotify/play", authenticateUser, userController.playTracks)
+router.get("/:userID/spotify/saved_tracks", authenticateUser, userController.getUserSpotifySavedTracks)
+router.get("/:userID/spotify/saved_tracks/personality", authenticateUser, userController.getUserPersonalityFromSavedTracks)
 export default router
