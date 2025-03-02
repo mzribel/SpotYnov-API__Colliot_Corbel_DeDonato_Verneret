@@ -10,7 +10,7 @@
 			"name": "Auth",
 			"item": [
 				{
-					"name": "/register",
+					"name": "/auth/register",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -22,7 +22,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\":\"Meskouyenski\",\r\n    \"password\":\"hello\"\r\n}",
+							"raw": "{\r\n    \"username\":\"login\",\r\n    \"password\":\"password\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -30,13 +30,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/register",
+							"raw": "http://localhost:3000/auth/register",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"auth",
 								"register"
 							]
 						}
@@ -44,13 +45,13 @@
 					"response": []
 				},
 				{
-					"name": "/login",
+					"name": "/auth/login",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\":\"username\",\r\n    \"password\":\"password\"\r\n}",
+							"raw": "{\r\n    \"username\":\"login\",\r\n    \"password\":\"password!\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -58,13 +59,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/login",
+							"raw": "http://localhost:3000/auth/login",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"auth",
 								"login"
 							]
 						}
@@ -72,13 +74,13 @@
 					"response": []
 				},
 				{
-					"name": "/spotify/auth",
+					"name": "/auth/spotify/auth",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer <token>",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhdGhnYXRlIiwiaWQiOiIxIiwiaWF0IjoxNzQwNTk4MzE4LCJleHAiOjE3NDA2ODQ3MTh9.BZXN9v7ppXkWPrWZVdL-_dDGJmMWafs5XZLBnwvWWpE",
 								"type": "text"
 							}
 						],
@@ -98,15 +100,28 @@
 					"response": []
 				},
 				{
-					"name": "/spotify/callback",
+					"name": "/auth/spotify/callback",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/spotify/callback",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"spotify",
+								"callback"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "/spotify/link_account",
+					"name": "/auth/spotify/link_account",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -118,7 +133,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"spotify_token\": {\r\n    \"access_token\": \"<token>\",\r\n    \"token_type\": \"Bearer\",\r\n    \"expires_in\": 3600,\r\n    \"refresh_token\": \"<token>\",\r\n    \"scope\": \"<scope>\"\r\n  }    \r\n}",
+							"raw": "// Vous pouvez directement coller le retour de /auth/spotify/callback\r\n{\r\n    \"data\":{\r\n        \"access_token\":\"<access_token>\",\r\n        \"token_type\":\"Bearer\",\r\n        \"expires_in\":3600,\r\n        \"refresh_token\":\"<refresh_token>\",\r\n        \"scope\":\"<scope>\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -126,13 +141,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/spotify/link_account",
+							"raw": "http://localhost:3000/auth/spotify/link_account",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"auth",
 								"spotify",
 								"link_account"
 							]
@@ -141,24 +157,25 @@
 					"response": []
 				},
 				{
-					"name": "/spotify/unlink_account",
+					"name": "/auth/spotify/unlink_account",
 					"request": {
-						"method": "GET",
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer <token>",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhdGhnYXRlIiwiaWQiOiIxIiwiaWF0IjoxNzQwNTk4MzE4LCJleHAiOjE3NDA2ODQ3MTh9.BZXN9v7ppXkWPrWZVdL-_dDGJmMWafs5XZLBnwvWWpE",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/spotify/unlink_account",
+							"raw": "http://localhost:3000/auth/spotify/unlink_account",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"auth",
 								"spotify",
 								"unlink_account"
 							]
@@ -172,19 +189,117 @@
 			"name": "Users",
 			"item": [
 				{
+					"name": "TODO -- Optionnel",
+					"item": [
+						{
+							"name": "/users",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer <token>",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"login\",\r\n    \"password\":\"password\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/users",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/users/[id]",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer <token>",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3000/users/[id]",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"[id]"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/users/[id]",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer <token>",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3000/users/[id]",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"[id]"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "/users",
 					"request": {
-						"method": "POST",
-						"header": [],
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:3000/users",
+							"raw": "http://localhost:3000/users/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"users"
+								"users",
+								""
 							]
 						}
 					},
@@ -194,15 +309,13 @@
 					"name": "/users/[id]",
 					"request": {
 						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "/users/[id]",
-					"request": {
-						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "http://localhost:3000/users/[id]",
 							"protocol": "http",
@@ -219,12 +332,18 @@
 					"response": []
 				},
 				{
-					"name": "/users/[id]",
+					"name": "/users/[id]/spotify/profile",
 					"request": {
-						"method": "DELETE",
-						"header": [],
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:3000/users/[id]",
+							"raw": "http://localhost:3000/users/1/spotify/profile",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -232,7 +351,132 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"[id]"
+								"1",
+								"spotify",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/[id]/spotify/currently_playing",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/users/1/spotify/currently_playing",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"1",
+								"spotify",
+								"currently_playing"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/[id]/spotify/play",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uris\": [ \"spotify:track:2nOQ1oLbtnIQGC77yKLEON\" ],\r\n    \"progress_ms\": 12345\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/1/spotify/play",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"1",
+								"spotify",
+								"play"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/[id]/spotify/saved_tracks",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/users/1/spotify/saved_tracks/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"1",
+								"spotify",
+								"saved_tracks",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/[id]/spotify/saved_tracks/personality",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/users/6/spotify/saved_tracks/personality",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"6",
+								"spotify",
+								"saved_tracks",
+								"personality"
 							]
 						}
 					},
@@ -244,28 +488,87 @@
 			"name": "Groups",
 			"item": [
 				{
-					"name": "/groups",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
+					"name": "TODO -- Optionnel",
+					"item": [
+						{
+							"name": "/groups/[id]",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer <token>",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"groupname\": \"Nom d'un super groupe\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/groups/[id]",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"groups",
+										"[id]"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/groups/[id]/members/[id]/promote",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer <token>",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3000/groups/[id]/members/[id]/promote",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"groups",
+										"[id]",
+										"members",
+										"[id]",
+										"promote"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				},
 				{
 					"name": "/groups",
 					"request": {
-						"method": "POST",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "/groups/[id]",
-					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:3000/groups/[id]",
+							"raw": "http://localhost:3000/groups/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -273,7 +576,41 @@
 							"port": "3000",
 							"path": [
 								"groups",
-								"[id]"
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/groups",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"groupname\": \"Ceci est un nom de groupe optionnel!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/groups",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"groups"
 							]
 						}
 					},
@@ -282,10 +619,16 @@
 				{
 					"name": "/groups/[id]",
 					"request": {
-						"method": "PUT",
-						"header": [],
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:3000/groups/[id]",
+							"raw": "http://localhost:3000/groups/4",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -293,7 +636,7 @@
 							"port": "3000",
 							"path": [
 								"groups",
-								"[id]"
+								"4"
 							]
 						}
 					},
@@ -303,9 +646,19 @@
 					"name": "/groups/[id]",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
 						"url": {
-							"raw": "http://localhost:3000/groups/[id]",
+							"raw": "http://localhost:3000/groups/4",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -313,7 +666,7 @@
 							"port": "3000",
 							"path": [
 								"groups",
-								"[id]"
+								"4"
 							]
 						}
 					},
@@ -323,9 +676,24 @@
 					"name": "/groups/[id]/members",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": \"<user_id>\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:3000/groups/[id]/members",
+							"raw": "http://localhost:3000/groups/9/members",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -333,7 +701,7 @@
 							"port": "3000",
 							"path": [
 								"groups",
-								"[id]",
+								"9",
 								"members"
 							]
 						}
@@ -344,9 +712,15 @@
 					"name": "/groups/[id]/members",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:3000/groups/[id]/members",
+							"raw": "http://localhost:3000/groups/4/members/3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -354,8 +728,37 @@
 							"port": "3000",
 							"path": [
 								"groups",
-								"[id]",
-								"members"
+								"4",
+								"members",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/groups/[id]/spotify/synchronize",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/groups/9/spotify/synchronize",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"groups",
+								"9",
+								"spotify",
+								"synchronize"
 							]
 						}
 					},
@@ -364,50 +767,8 @@
 			]
 		},
 		{
-			"name": "Features",
+			"name": "TODO",
 			"item": [
-				{
-					"name": "/groups/[id]/synchronize",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/groups/[id]/synchronize",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"groups",
-								"[id]",
-								"synchronize"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/users/[id]/personality",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/users/[id]/personality",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"users",
-								"[id]",
-								"personality"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "/users/[id]/playlists/from-top-tracks",
 					"request": {
@@ -431,6 +792,28 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

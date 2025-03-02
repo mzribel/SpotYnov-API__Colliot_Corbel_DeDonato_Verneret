@@ -89,8 +89,6 @@ export class GroupController {
 
         await this.groupSpotifyService.synchronizePlayers(group);
 
-        ResponseService.handleSuccessResponse(res, {
-            message:`Should sync`
-        })
+        ResponseService.handleSuccessResponse(res, null, 204)
     }
 }
