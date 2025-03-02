@@ -6,4 +6,4 @@
 app.log
 *.js
 /SpotYnov API/data/users.json
-/SpotYnov API/data/users.example.json
+/SpotYnov API/data/groups.json
