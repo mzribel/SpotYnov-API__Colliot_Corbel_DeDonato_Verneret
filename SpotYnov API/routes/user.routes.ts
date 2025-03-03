@@ -33,4 +33,5 @@ router.get("/:userID/spotify/top_tracks", authenticateUser, userController.getUs
 
 router.post("/:userID/spotify/playlists/", authenticateUser, userController.createSpotifyPlaylist)
 router.post("/:userID/spotify/playlists/:playlistID", authenticateUser, userController.addToUserPlaylist)
+router.delete("/:userID/spotify/saved_tracks", authenticateUser, userController.emptyUserSavedTracks)
 export default router

@@ -4,6 +4,7 @@ import { UserService } from "../services/user.service";
 import {ApiError} from "../utils/error.util";
 import { ResponseService } from "../services/api/response.service";
 import {UserSpotifyService} from "../services/user.spotify.service";
+import {SpotifyTrackDTO} from "../dtos/spotify.track.dto";
 
 export class UserController {
     // Dependancy Injection
@@ -90,5 +91,34 @@ export class UserController {
         const playlistID = req.params.playlistID;
         const response = await this.userSpotifyService.addToUserPlaylist(user, playlistID, uris)
         ResponseService.handleSuccessResponse(res, response, 201)
+    }
+
+    public emptyUserSavedTracks = async (req: Request, res: Response, next: NextFunction) => {
+        const user = this.userService.getUserByIDOrExplode(req.params.userID);
+
+        if (req.user?.id != user.Id) {
+            throw new ApiError(403, "A user can only modify their own saved tracks.")
+        }
+
+        const from_end:boolean = (req.query.from_end?.toString() ?? '').toLowerCase() == "true";
+        let amount:number = parseInt(req.query.amount?.toString()??"");
+        if (!amount || amount < 1) { amount = 5; }
+
+        let ids:string[] = [];
+        let tracks:SpotifyTrackDTO[] = [];
+        if (!from_end) {
+            tracks = await this.userSpotifyService.requestSavedTracks(user, 0, amount)
+        } else {
+            tracks = await this.userSpotifyService.getAllSavedTracks(user);
+            if (tracks.length > amount) {
+                tracks = tracks.slice(-amount);
+            }
+        }
+
+        ids = tracks.map((track:SpotifyTrackDTO) => track.id);
+        await this.userSpotifyService.removeFromUserSavedTracks(user, ids);
+        ResponseService.handleSuccessResponse(res, {
+            message: `Deleted ${amount} tracks from user ${user.Username}'s saved tracks.`
+        }, 200)
     }
 }

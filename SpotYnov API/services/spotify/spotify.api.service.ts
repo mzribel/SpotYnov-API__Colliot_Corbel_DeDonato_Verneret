@@ -88,6 +88,16 @@ export class SpotifyApiService {
         })
         return response.data;
     }
+
+    async removeFromSavedTracks(access_token:string, ids:string[]) {
+        const response = await this.spotifyRequestService.request({
+            method:"delete",
+            endpoint:"/me/tracks",
+            access_token,
+            body: {ids}
+        })
+        return response.data;
+    }
 }
 
 

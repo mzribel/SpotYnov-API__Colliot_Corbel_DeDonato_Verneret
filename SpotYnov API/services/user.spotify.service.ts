@@ -142,6 +142,11 @@ export class UserSpotifyService {
     async addToUserPlaylist(user:User, playlist_id:string, uris:string[]) {
         return this.userRequest(user, (token:string) => this.spotifyApiService.addToPlaylist(token, playlist_id, uris))
     }
+
+    async removeFromUserSavedTracks(user:User, ids:string[]) {
+        return this.userRequest(user, (token:string) => this.spotifyApiService.removeFromSavedTracks(token, ids))
+    }
+
 }
 
 

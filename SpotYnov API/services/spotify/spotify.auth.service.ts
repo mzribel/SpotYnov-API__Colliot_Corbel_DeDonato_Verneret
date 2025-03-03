@@ -12,7 +12,8 @@ export class SpotifyAuthService {
         "user-top-read",                // Récupérer les musiques les plus jouées
         "playlist-modify-public",       // Créer/modifier des playlists publiques
         "playlist-modify-private",      // Créer/modifier des playlists privées
-        "user-read-currently-playing"   // Yep
+        "user-read-currently-playing",   // Yep
+        "user-library-modify"
     ]
 
     private spotifyRequestService: SpotifyRequestService
