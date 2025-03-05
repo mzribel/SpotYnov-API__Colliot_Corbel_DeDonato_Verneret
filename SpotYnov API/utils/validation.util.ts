@@ -1,5 +1,3 @@
-import { createHash } from 'node:crypto';
-
 export const isPasswordValid = (password: string):boolean => {
     // Entre 8 et 24 chars, majuscule, minuscule, nombre et caractère spécial
     let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,24}$/

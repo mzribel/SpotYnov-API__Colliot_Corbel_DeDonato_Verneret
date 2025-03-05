@@ -1,4 +1,3 @@
-import log from '../logger';
 import { Request, Response, NextFunction } from 'express';
 import { UserService } from "../services/user.service";
 import {ApiError} from "../utils/error.util";

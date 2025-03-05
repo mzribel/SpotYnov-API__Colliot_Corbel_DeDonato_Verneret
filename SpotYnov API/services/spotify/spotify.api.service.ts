@@ -98,6 +98,15 @@ export class SpotifyApiService {
         })
         return response.data;
     }
+
+    async getPlaylist(access_token:string, playlist_id:string) {
+        const response = await this.spotifyRequestService.request({
+            method:"get",
+            endpoint: `/playlists/${playlist_id}/`,
+            access_token
+        })
+        return response.data;
+    }
 }
 
 

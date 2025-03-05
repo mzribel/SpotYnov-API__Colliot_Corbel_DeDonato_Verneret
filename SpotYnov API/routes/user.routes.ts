@@ -8,7 +8,6 @@ import { UserDAO } from "../daos/user.dao";
 import {UserSpotifyService} from "../services/user.spotify.service";
 import {SpotifyAuthService} from "../services/spotify/spotify.auth.service";
 import {SpotifyApiService} from "../services/spotify/spotify.api.service";
-import user from "../models/User";
 
 const userDAO = new UserDAO();
 const userService = new UserService(userDAO);

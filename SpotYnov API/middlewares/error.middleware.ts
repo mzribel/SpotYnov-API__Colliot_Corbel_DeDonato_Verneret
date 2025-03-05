@@ -10,8 +10,9 @@ export const handleErrors = (err:Error|ApiError, req:Request, res:Response, next
     } else if (err instanceof AxiosError) {
         let error_msg = "Spotify Error : "+err.message;
         error_msg += err.response?.data.error_description ? ` (${err.response.data.error_description})` : "";
+        // console.log(err)
         return ResponseService.handleErrorResponse(res, err.status ?? 500, error_msg);
     }
-    console.log(err)
+
     return ResponseService.handleErrorResponse(res, 500, "Internal Server Error.")
 }
