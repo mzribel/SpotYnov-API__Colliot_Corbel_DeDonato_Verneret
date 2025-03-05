@@ -24,12 +24,15 @@ export class UserSpotifyService {
         requestFn:(token:string, ...args:any[]) => Promise<any>,
         ...args:[]): Promise<any> {
 
-        if (!user.spotify_data?.token_data) { throw new ApiError(403, "User has not linked any Spotify account.") }
+        if (!user.SpotifyAccessToken && !user.SpotifyRefreshToken) { throw new ApiError(401, "User has not linked any Spotify account.") }
 
         try {
             return await requestFn(user.SpotifyAccessToken, ...args);
         } catch (error) {
-            if (error instanceof AxiosError) {
+            if (error instanceof AxiosError && error.status == 401) {
+                if (!user.SpotifyRefreshToken) {
+                    throw new ApiError(401, "Spotify token missing or invalid.")
+                }
                 const new_token = await this.refreshUserToken(user) ?? "";
                 return await requestFn(new_token, ...args);
             }
