@@ -10,8 +10,27 @@ const logout = () => {
   router.push('/');
 };
 
-const connectSpotify = () => {
-  window.location.href = 'http://localhost:3000/auth/spotify/auth';
+const connectSpotify = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/auth/spotify/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error('Erreur lors de la récupération de l’URL Spotify');
+
+    const data = await response.json();
+    if (data.data.url) {
+      window.location.href = data.data.url; // Redirige vers Spotify
+    } else {
+      throw new Error('URL non reçue');
+    }
+  } catch (error) {
+    console.error('Erreur:', error);
+    alert('Impossible de se connecter à Spotify');
+  }
 };
 </script>
 
