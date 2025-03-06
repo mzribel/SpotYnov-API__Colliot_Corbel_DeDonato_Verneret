@@ -1,0 +1,10 @@
+{
+  "auto_increment": 2,
+  "users": {
+    "1": {
+      "username": "tony",
+      "password": "71ad21d80198d3d98b3bd38bcdbf98573ff7d74f14690b92a78013f780f5ce2a",
+      "id": 1
+    }
+  }
+}
