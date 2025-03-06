@@ -2,7 +2,11 @@
 </script>
 
 <template>
-  <div>
+  <div id="global-container">
     <router-view></router-view>
   </div>
 </template>
+
+<style>
+
+</style>

@@ -26,7 +26,8 @@ const submitForm = async () => {
 
     const data = await response.json();
     const token = data.data.access_token
-    if (isLogin.value && token) {
+
+    if (token) {
       authStore.login(token, username.value);
       await router.push('/dashboard');
     }
