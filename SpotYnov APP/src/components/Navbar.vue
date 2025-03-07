@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { useAuthStore } from '../store/auth';
 import { useRouter } from 'vue-router';
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import AccountLinker from "./AccountLinker.vue";
 
 const authStore = useAuthStore();
 const router = useRouter();
 
-const spotifyUrl = ref('');
 const accountLinkerVisible = ref(false);
 
 const logout = () => {
@@ -15,55 +14,35 @@ const logout = () => {
   router.push('/');
 };
 
-const retrieveSpotifyUrl = async () => {
-  try {
-    const response = await fetch('http://localhost:3000/auth/spotify/', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-      },
-    });
-
-    if (!response.ok) throw new Error('Erreur lors de la récupération de l’URL Spotify');
-
-    const data = await response.json();
-    if (data.data.url) {
-      spotifyUrl.value = data.data.url;
-    } else {
-      throw new Error('URL non reçue');
-    }
-  } catch (error) {
-    console.error('Erreur:', error);
-    alert('Impossible de se connecter à Spotify');
-  }
-};
-
-onMounted( async () => {
-  if (authStore.isAuthenticated) {
-    await retrieveSpotifyUrl();
-  }
-});
 </script>
 
 <template>
-  <nav class="navbar">
-    <div class="logo">🎵 SpotYnov</div>
+  <nav class="navbar ">
+    <div class="logo flex items-center gap-3">
+      <img src="../../public/lettre-y.png" class="h-10 w-10" alt="logo">
+      SpotYnov
+    </div>
     <div class="nav-links" v-if="authStore.isAuthenticated">
       <span>Bienvenue, {{ authStore.username }}</span>
-      <a class="spotify-link" v-if="spotifyUrl" :href="spotifyUrl"  @click="()=>{accountLinkerVisible = !accountLinkerVisible}" target="_blank">🎧 Connexion Spotify</a>
-      <button @click="logout">🚪 Déconnexion</button>
+      <button class="to-spotify-btn flex flex-row gap-3" @click="()=>{accountLinkerVisible = !accountLinkerVisible}" >
+        <img src="../../public/spotlogo.png" class="h-6 w-6" alt="spotify logo">
+        Connexion Spotify
+      </button>
+      <button class="logout" @click="logout">Déconnexion</button>
     </div>
-    <AccountLinker v-if="accountLinkerVisible" />
+    <AccountLinker @update:accountLinkerVisible="accountLinkerVisible = $event"
+        v-if="accountLinkerVisible" />
   </nav>
 </template>
 
-<style scoped>
+<style>
 .navbar {
   display: flex;
   justify-content: space-between;
-  padding: 15px;
-  background: #1DB954;
+  padding: 10px;
+  background: #000000;
   color: white;
+  border-bottom: 3px solid #1f1f1f;
 }
 .nav-links {
   display: flex;
@@ -74,18 +53,37 @@ button {
   padding: 8px 12px;
   border: none;
   cursor: pointer;
-  background: white;
-  color: #1DB954;
+  background: #1f1f1f;
+  color: #9d9d9d;
   border-radius: 5px;
+  transition: 1s !important;
 }
 button:hover {
-  background: #f1f1f1;
-}
-.spotify-link {
-  background: #1DB954;
+  background: #656565;
   color: white;
-  padding: 8px 12px;
-  border-radius: 5px;
-  text-decoration: none;
 }
+
+.logout{
+  background: linear-gradient(0deg, #1f1f1f, #540000);
+}
+
+.logout:hover{
+  background: red;
+  transition: 1s;
+
+}
+
+.to-spotify-btn{
+  background: linear-gradient(180deg, #004600, #1f1f1f);
+}
+
+.to-spotify-btn:hover{
+  background: #1DB954;
+  transition: 1s;
+}
+
+</style>
+
+<style>
+
 </style>

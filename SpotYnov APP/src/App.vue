@@ -8,5 +8,9 @@
 </template>
 
 <style>
+@import "tailwindcss";
+@import "tailwindcss/utilities.css";
+@import "tailwindcss/preflight.css";
+@import "tailwindcss/theme.css";
 
 </style>

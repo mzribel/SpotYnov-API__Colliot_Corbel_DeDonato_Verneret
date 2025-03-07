@@ -19,7 +19,7 @@ const submitForm = async () => {
     const response = await fetch(`http://localhost:3000${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: username.value, password: "Ex@mpl3P@ssw0rd"}),
+      body: JSON.stringify({ username: username.value, password: "Ex@mpl3P@ssw0rd"}), // TODO: replace with password.value
     });
 
     if (!response.ok) throw new Error('Échec de la requête');
