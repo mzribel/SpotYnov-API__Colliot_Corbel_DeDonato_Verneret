@@ -148,7 +148,7 @@ export class GroupService {
         return hasBeenDeleted;
     }
 
-    public getGroupUsers = (group:Group) => {
+    public getGroupUsers = (group:Group):User[] => {
         return group.members.flatMap((member:GroupMember) => this.userService.getUserById(member.Id) ?? [])
     }
 }

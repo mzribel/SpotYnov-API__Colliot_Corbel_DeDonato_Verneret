@@ -4,7 +4,6 @@ import { UserService } from "./user.service";
 import User from "../models/User";
 import { ApiError } from "../utils/error.util";
 import { SpotifyApiService } from "./spotify/spotify.api.service";
-import { SpotifyRequestService} from "./spotify/spotify.request.service";
 import { AxiosError } from "axios";
 import {SpotifyTokenData} from "../models/SpotifyData";
 import {msDurationToString} from "../utils/format.util";
@@ -24,12 +23,15 @@ export class UserSpotifyService {
         requestFn:(token:string, ...args:any[]) => Promise<any>,
         ...args:[]): Promise<any> {
 
-        if (!user.spotify_data?.token_data) { throw new ApiError(403, "User has not linked any Spotify account.") }
+        if (!user.SpotifyAccessToken && !user.SpotifyRefreshToken) { throw new ApiError(401, "User has not linked any Spotify account.") }
 
         try {
             return await requestFn(user.SpotifyAccessToken, ...args);
         } catch (error) {
-            if (error instanceof AxiosError) {
+            if (error instanceof AxiosError && error.status == 401) {
+                if (!user.SpotifyRefreshToken) {
+                    throw new ApiError(401, "Spotify token missing or invalid.")
+                }
                 const new_token = await this.refreshUserToken(user) ?? "";
                 return await requestFn(new_token, ...args);
             }
@@ -62,18 +64,16 @@ export class UserSpotifyService {
 
         // Modifies but **doesn't save** user data and retrieves Spotify Profile.
         // We retrieve the profile to check the token validity!
-        user.setSpotifyToken(token_data);
-        const userProfileResponse = await this.getUserSpotifyProfile(user);
+        user.setSpotifyData(token_data, "", "");
+        console.log(user)
+        const user_data = await this.getUserSpotifyProfile(user);
 
         // If profile has successfully been retrieved, we save the token in json file.
-        this.userService.setSpotifyUserData(user, token_data,userProfileResponse.data.id, userProfileResponse.data.display_name)
-        return {
-            id: userProfileResponse.data.id,
-            display_name: userProfileResponse.data.display_name
-        }
+        this.userService.setSpotifyUserData(user, token_data,user_data.id, user_data.display_name)
+        return user_data;
     }
 
-    async getUserSpotifyProfile(user:User) {
+    async getUserSpotifyProfile(user:User): Promise<SpotifyUserDTO> {
         return this.userRequest(user, (token) => this.spotifyApiService.getSpotifyProfile(token))
     }
 
@@ -82,6 +82,10 @@ export class UserSpotifyService {
     }
     async requestSavedTracks(user:User, offset=0, limit=50):Promise<any> {
         return this.userRequest(user, (token:string):Promise<any> => this.spotifyApiService.getSavedTracks(token, offset, limit))
+    }
+
+    async getSavedTracks(user:User, offset=0, limit=50):Promise<SpotifyTrackDTO[]> {
+        return (await this.requestSavedTracks(user, offset, limit)).items ?? [];
     }
 
     async getAllSavedTracks(user:User, limitPerRequest=50):Promise<SpotifyTrackDTO[]> {
@@ -99,6 +103,9 @@ export class UserSpotifyService {
             data = await this.requestSavedTracks(user, offset, limitPerRequest);
         }
         return savedTracks;
+    }
+    async requestTopTracks(user:User, limit:number=50, offset:number=0):Promise<SpotifyTrackDTO[]> {
+        return this.userRequest(user, (token:string):Promise<any> => this.spotifyApiService.getTopTracks(token, offset, limit))
     }
 
     async getUserPersonalityFromSavedTracks(user:User) {
@@ -131,6 +138,24 @@ export class UserSpotifyService {
             if (user.Id == from_user.Id) continue;
             await this.playTracks(user, [uri], progress_ms).catch(()=>{});
         }
+    }
+
+    async createUserPlaylist(user:User, name="", description?:string) {
+        const user_data = await this.getUserSpotifyProfile(user);
+        name = name.trim();
+        if (!name) { name = `${user.Username}'s playlist`}
+        return this.userRequest(user, (token:string) => this.spotifyApiService.createPlaylist(token, user_data.id, name, description))
+    }
+
+    async addToUserPlaylist(user:User, playlist_id:string, uris:string[]) {
+        return this.userRequest(user, (token:string) => this.spotifyApiService.addToPlaylist(token, playlist_id, uris))
+    }
+
+    async removeFromUserSavedTracks(user:User, ids:string[]) {
+        return this.userRequest(user, (token:string) => this.spotifyApiService.removeFromSavedTracks(token, ids))
+    }
+    async getUserPlaylist(user:User, id:string) {
+        return this.userRequest(user, (token:string) => this.spotifyApiService.getPlaylist(token, id))
     }
 }
 

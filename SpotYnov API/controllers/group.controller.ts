@@ -4,6 +4,7 @@ import {ResponseService} from "../services/api/response.service";
 import {GroupService} from "../services/group.service";
 import {Group, GroupDTO} from "../models/Group";
 import {GroupSpotifyService} from "../services/group.spotify.service";
+import User from "../models/User";
 
 export class GroupController {
     // Dependancy Injection
@@ -90,5 +91,31 @@ export class GroupController {
         await this.groupSpotifyService.synchronizePlayers(group);
 
         ResponseService.handleSuccessResponse(res, null, 204)
+    }
+
+    public createPlaylistFromMembersTopTracks = async (req: Request, res: Response, next: NextFunction) => {
+        const group = this.groupService.getGroupByID(req.params.groupID);
+        if (!group) { throw new ApiError(400, "Group doesn't exist.") }
+
+        const user = this.groupService.getGroupUsers(group).find((user:User)=>user.Id == req.user?.id)
+        // TODO: check ces error codes
+        if (!user) { throw new ApiError(403, "User is not a member of the group.") }
+        if (!user.hasSpotifyTokenData()) { throw new ApiError(403, "User has not linked any Spotify account") }
+        const response = await this.groupSpotifyService.createPlaylistFromMembersTopTracks(group, user);
+
+        ResponseService.handleSuccessResponse(res, response, 201)
+    }
+
+    public getMembersTopTracks = async (req: Request, res: Response, next: NextFunction) => {
+        const group_id = req.params.groupID;
+        const group = this.groupService.getGroupByID(group_id);
+        if (!group) { throw new ApiError(400, "Group doesn't exist.") }
+
+        if (!group.memberExists(req.user?.id ?? "")) {
+            throw new ApiError(403, "User is not a member of the group.")
+        }
+
+        const topTracks = await this.groupSpotifyService.getMembersTopTracks(group);
+        ResponseService.handleSuccessResponse(res, topTracks, 200)
     }
 }

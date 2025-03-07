@@ -28,4 +28,9 @@ router.get("/:userID/spotify/currently_playing", authenticateUser, userControlle
 router.put("/:userID/spotify/play", authenticateUser, userController.playTracks)
 router.get("/:userID/spotify/saved_tracks", authenticateUser, userController.getUserSpotifySavedTracks)
 router.get("/:userID/spotify/saved_tracks/personality", authenticateUser, userController.getUserPersonalityFromSavedTracks)
+router.get("/:userID/spotify/top_tracks", authenticateUser, userController.getUserSpotifyTopTracks)
+
+router.post("/:userID/spotify/playlists/", authenticateUser, userController.createSpotifyPlaylist)
+router.post("/:userID/spotify/playlists/:playlistID", authenticateUser, userController.addToUserPlaylist)
+router.delete("/:userID/spotify/saved_tracks", authenticateUser, userController.emptyUserSavedTracks)
 export default router

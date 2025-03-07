@@ -8,9 +8,11 @@ export const handleErrors = (err:Error|ApiError, req:Request, res:Response, next
     if (err instanceof ApiError) {
         return ResponseService.handleErrorResponse(res, err.statusCode, err.message);
     } else if (err instanceof AxiosError) {
-        console.log(err)
-        return ResponseService.handleErrorResponse(res, err.status ?? 500, "Spotify Error : "+err.message);
+        let error_msg = "Spotify Error : "+err.message;
+        error_msg += err.response?.data.error_description ? ` (${err.response.data.error_description})` : "";
+        // console.log(err)
+        return ResponseService.handleErrorResponse(res, err.status ?? 500, error_msg);
     }
-    console.log(err)
+
     return ResponseService.handleErrorResponse(res, 500, "Internal Server Error.")
 }

@@ -2,7 +2,6 @@ import { hashPassword } from "../utils/auth.util";
 import {SpotifyTokenData, SpotifyData} from "./SpotifyData";
 import {ApiError} from "../utils/error.util";
 
-
 // ---------------------------------------- //
 // ----------- USERDATA (model) ----------- //
 // ---------------------------------------- //
@@ -47,15 +46,16 @@ export class User {
             display_name: this.spotify_data.display_name
         }
     }
-    setSpotifyData(token_data:object, id:string, display_name:string, ) {
+    setSpotifyData(token_data:object, id:string, display_name:string, force_valid_id:boolean=false) {
         const tokenData:SpotifyTokenData = SpotifyTokenData.fromObject(token_data)
-        if (!tokenData || !tokenData.AccessToken || !id ) return;
+        if (!tokenData || (!tokenData.AccessToken && !tokenData.RefreshToken) || force_valid_id && !id) return false;
 
         this.spotify_data = {
             id:id,
             display_name:display_name,
             token_data:tokenData
         }
+        return true;
     }
     setSpotifyToken(token_data:object|SpotifyTokenData) {
         if (!this.spotify_data?.id || !this.spotify_data.display_name)
@@ -79,7 +79,7 @@ export class User {
     }
 
     public hasSpotifyTokenData():boolean {
-        return !(!this.spotify_data?.token_data);     // LMAO j'ai oublié comment on fait
+        return !!(this.SpotifyRefreshToken || this.SpotifyAccessToken);     // LMAO j'ai oublié comment on fait
     }
 
     public checkPassword(password:string):boolean {
