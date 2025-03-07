@@ -18,7 +18,7 @@ const logout = () => {
 
 <template>
   <nav class="navbar ">
-    <div class="logo flex items-center gap-3">
+    <div class="hover:cursor-pointer flex items-center gap-3" @click="router.push('/dashboard')">
       <img src="../../public/lettre-y.png" class="h-10 w-10" alt="logo">
       SpotYnov
     </div>
@@ -81,9 +81,5 @@ button:hover {
   background: #1DB954;
   transition: 1s;
 }
-
-</style>
-
-<style>
 
 </style>
