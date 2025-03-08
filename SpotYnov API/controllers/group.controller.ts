@@ -98,11 +98,9 @@ export class GroupController {
         if (!group) { throw new ApiError(400, "Group doesn't exist.") }
 
         const user = this.groupService.getGroupUsers(group).find((user:User)=>user.Id == req.user?.id)
-        // TODO: check ces error codes
         if (!user) { throw new ApiError(403, "User is not a member of the group.") }
-        if (!user.hasSpotifyTokenData()) { throw new ApiError(403, "User has not linked any Spotify account") }
-        const response = await this.groupSpotifyService.createPlaylistFromMembersTopTracks(group, user);
 
+        const response = await this.groupSpotifyService.createPlaylistFromMembersTopTracks(group, user);
         ResponseService.handleSuccessResponse(res, response, 201)
     }
 
