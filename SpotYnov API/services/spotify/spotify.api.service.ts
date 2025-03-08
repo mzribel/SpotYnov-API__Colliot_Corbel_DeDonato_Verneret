@@ -1,5 +1,3 @@
-// TODO : Exporter les méthodes utiles :
-
 import { SpotifyRequestService } from "./spotify.request.service";
 import {SpotifyUserDTO} from "../../dtos/spotify.user.dto";
 import {SpotifyPlaybackStateDTO} from "../../dtos/spotify.playbackstate.dto";
