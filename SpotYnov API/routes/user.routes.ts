@@ -19,9 +19,6 @@ const userController = new UserController(userService, userSpotifyService);
 router.get("/", authenticateUser, userController.getUsersData)
 router.get("/:userID/", authenticateUser, userController.getUserData)
 
-// router.put("/users/:userId/personality", ...);
-// router.post("/users/:userId/playlists/from-top-tracks", ...);
-
 router.get("/:userID/spotify/profile", authenticateUser, userController.getSpotifyUserProfile)
 router.get("/:userID/spotify/currently_playing", authenticateUser, userController.getUserSpotifyCurrentlyPlayingTrack)
 router.put("/:userID/spotify/play", authenticateUser, userController.playTracks)
@@ -31,5 +28,4 @@ router.get("/:userID/spotify/top_tracks", authenticateUser, userController.getUs
 
 router.post("/:userID/spotify/playlists/", authenticateUser, userController.createSpotifyPlaylist)
 router.post("/:userID/spotify/playlists/:playlistID", authenticateUser, userController.addToUserPlaylist)
-router.delete("/:userID/spotify/saved_tracks", authenticateUser, userController.emptyUserSavedTracks)
 export default router

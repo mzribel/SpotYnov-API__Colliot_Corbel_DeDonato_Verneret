@@ -100,7 +100,9 @@ export class GroupController {
         const user = this.groupService.getGroupUsers(group).find((user:User)=>user.Id == req.user?.id)
         if (!user) { throw new ApiError(403, "User is not a member of the group.") }
 
-        const response = await this.groupSpotifyService.createPlaylistFromMembersTopTracks(group, user);
+        let playlist_name:string = req.body.playlist_name;
+        const playlist_description:string = req.body.playlist_description;
+        const response = await this.groupSpotifyService.createPlaylistFromMembersTopTracks(group, user, playlist_name, playlist_description);
         ResponseService.handleSuccessResponse(res, response, 201)
     }
 
