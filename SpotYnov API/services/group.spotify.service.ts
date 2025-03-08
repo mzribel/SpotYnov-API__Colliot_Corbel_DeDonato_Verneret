@@ -35,7 +35,7 @@ export class GroupSpotifyService {
     }
 
     // TODO: clean up this shit
-    public async createPlaylistFromMembersTopTracks(group:Group, target_user:User) {
+    public async createPlaylistFromMembersTopTracks(group:Group, target_user:User, playlist_name?:string, playlist_description?:string) {
         if (!target_user.hasSpotifyTokenData()) { throw new ApiError(400, "User has not linked any Spotify account.") }
 
         // Retrieves music
@@ -50,7 +50,8 @@ export class GroupSpotifyService {
         }
 
         // Create playlist
-        const playlist_data = await this.userSpotifyService.createUserPlaylist(target_user);
+        if (!playlist_name) playlist_name = `${group.Name}'s playlist`;
+        const playlist_data = await this.userSpotifyService.createUserPlaylist(target_user, playlist_name, playlist_description);
         const playlist_id:string = playlist_data.id ?? "";
 
         // Add chunks of track uris to playlist

@@ -1,735 +1,1145 @@
 {
-    "openapi": "3.0.0",
-    "servers": [
-        {
-            "description": "SpotYnov API",
-            "url": "http://localhost:3000/"
-        }
-    ],
-    "info": {
-        "description": "Théo Colliot-Martinez, Marianne Corbel, Tony de Donato & Nils Verneret, B3 INFO DEV ♪",
-        "version": "1.0.1",
-        "title": "TP3 - SpotYnov API"
-    },
-    "tags": [
-        {
-            "name": "Authentication",
-            "description": "Endpoints related to Spotify user authentication"
-        },
-        {
-            "name": "Users",
-            "description": "Endpoints related to users"
-        },
-        {
-            "name": "Groups",
-            "description": "Endpoints related to user groups"
-        },
-        {
-            "name": "Playlists",
-            "description": "Endpoints related to user playlists"
-        }
-    ],
-    "paths": {
-        "/register": {
-            "post": {
-                "summary": "User registration",
-                "requestBody": {
-                    "description": "User data",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "username": {
-                                        "type": "string",
-                                        "description": "Username of the new user"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "description": "Password of the new user"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created"
-                    },
-                    "400": {
-                        "description": "Bad request (wrong user credential format)"
-                    },
-                    "409": {
-                        "description": "Conflict (user already exists)"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Authentication"
-                ]
-            }
-        },
-        "/login": {
-            "get": {
-                "summary": "User login",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "userId",
-                        "description": "ID of the user to be logged in",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    },
-                    {
-                        "in": "query",
-                        "name": "password",
-                        "description": "Password of the user to be logged in",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Unauthorized (wrong user credentials)"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Authentication"
-                ]
-            }
-        },
-        "/logout": {
-            "get": {
-                "summary": "Deletes Spotify user tokens from database",
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Authentication"
-                ]
-            }
-        },
-        "/spotify/auth": {
-            "get": {
-                "summary": "Retrieves Spotify connection URL using Authorization Code Grant method",
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Authentication"
-                ]
-            }
-        },
-        "/spotify/callback": {
-            "get": {
-                "summary": "Automatic redirection from Spotify after user connection (not to be used manually)",
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Authentication"
-                ]
-            }
-        },
-        "/users/": {
-            "get": {
-                "summary": "Retrieves service users",
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Users"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "summary": "Creates a new service user",
-                "requestBody": {
-                    "description": "User data",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "username": {
-                                        "type": "string",
-                                        "description": "Username of the new user"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "description": "Password of the new user"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created"
-                    },
-                    "400": {
-                        "description": "Bad request (wrong user credential format)"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Users"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/users/{userId}": {
-            "get": {
-                "summary": "Retrieves a service user by their user ID",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "userId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "Username of the user"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Users"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "summary": "Deletes a service user by their user ID",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "userId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "Username of the user"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Users"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/groups": {
-            "get": {
-                "summary": "Retrieves the data of the groups",
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Groups"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "summary": "Creates a new group",
-                "requestBody": {
-                    "description": "User data",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "username": {
-                                        "type": "string",
-                                        "description": "Name of the new group"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "409": {
-                        "description": "Conflict (another group with this name already exists)"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Groups"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/groups/{groupId}": {
-            "get": {
-                "summary": "Retrieves the data and members of a group by its ID",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "groupId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "ID of the group"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Not found"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Groups"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "summary": "Modifies a group by its ID",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "groupId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "ID of the group"
-                    }
-                ],
-                "requestBody": {
-                    "description": "User data",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "username": {
-                                        "type": "string",
-                                        "description": "Username of the new user"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "description": "Password of the new user"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "409": {
-                        "description": "Conflict (another group with this name already exists)"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Groups"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "summary": "Deletes a group by its ID",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "groupId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "ID of the group"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Groups"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/groups/{groupId}/members": {
-            "post": {
-                "summary": "Adds a new member to a group",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "groupId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "ID of the group"
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "userId": {
-                                        "type": "string",
-                                        "description": "Username of the user to add to the group"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "400": {
-                        "description": "Bad request (user doesn't exist)"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "409": {
-                        "description": "Conflict (member already part of the group)"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Groups"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "summary": "Deletes a member from a group",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "groupId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "ID of the group"
-                    },
-                    {
-                        "in": "query",
-                        "name": "userId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "ID of the user to remove from the group"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Groups"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/groups/{groupId}/synchronize": {
-            "get": {
-                "summary": "Synchronize all possible players from a group to a users player",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "groupId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "ID of the group"
-                    },
-                    {
-                        "in": "query",
-                        "name": "userId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "ID of the group"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    }
-                },
-                "tags": [
-                    "Groups"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/users/{userId}/playlists/from-top-tracks": {
-            "post": {
-                "summary": "Creates a playlist for the current user with the top tracks of a given member",
-                "requestBody": {
-                    "description": "User data",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "description": "Name of the playlist"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "description": "Description of the playlist"
-                                    },
-                                    "public": {
-                                        "type": "boolean",
-                                        "description": "Whether or not the playlist will be public"
-                                    },
-                                    "tracks-per-users": {
-                                        "description": "Number of top tracks per user to add to playlist ([1-50])",
-                                        "type": "integer"
-                                    },
-                                    "user-ids": {
-                                        "type": "array",
-                                        "description": "Array of user IDs",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "group-id": {
-                                        "type": "string",
-                                        "description": "ID of the group to create a playlist from"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "userId",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "description": "ID of the user"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created"
-                    },
-                    "401": {
-                        "description": "Unauthorized (Missing or wrong authentication header or missing Spotify Connection)"
-                    },
-                    "429": {
-                        "description": "Too many requests"
-                    },
-                    "500": {
-                        "description": "Server error"
-                    }
-                },
-                "tags": [
-                    "Playlists"
-                ],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        }
-    },
-    "components": {
-        "securitySchemes": {
-            "bearerAuth": {
-                "type": "http",
-                "scheme": "bearer",
-                "bearerFormat": "JWT"
-            }
-        }
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "description": "SpotYnov API",
+      "url": "http://localhost:3000/"
     }
+  ],
+  "info": {
+    "description": "Théo Colliot-Martinez, Marianne Corbel, Tony de Donato & Nils Verneret, B3 INFO DEV ♪",
+    "version": "1.1.0",
+    "title": "TP3 - SpotYnov API"
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Endpoints related to API user authentication"
+    },
+    {
+      "name": "Authentication - Spotify",
+      "description": "Endpoints related to Spotify user authentication"
+    },
+    {
+      "name": "Users",
+      "description": "Endpoints related to users"
+    },
+    {
+      "name": "Users - Spotify",
+      "description": "Endpoints related to users, accessing Spotify API"
+    },
+    {
+      "name": "Groups",
+      "description": "Endpoints related to user groups"
+    },
+    {
+      "name": "Groups - Spotify",
+      "description": "Endpoints related to groups, accessing Spotify API"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "User registration",
+        "requestBody": {
+          "description": "User data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username of the new user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password of the new user"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad request (wrong user credential format)"
+          },
+          "409": {
+            "description": "Conflict (user already exists)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "requestBody": {
+          "description": "User data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username of the new user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password of the new user"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized (wrong credentials)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/auth/spotify": {
+      "get": {
+        "summary": "Retrieves Spotify connection URL using Authorization Code Grant method",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Authentication - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/spotify/callback": {
+      "get": {
+        "summary": "Automatic redirection from Spotify after user connection (not to be used manually)",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Authentication - Spotify"
+        ]
+      }
+    },
+    "/auth/spotify/link_account": {
+      "post": {
+        "summary": "Links a spotify token data to the current user",
+        "requestBody": {
+          "description": "Token data returned by Spotify callback",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "access_token": {
+                        "type": "string"
+                      },
+                      "token_type": {
+                        "type": "string"
+                      },
+                      "expires_in": {
+                        "type": "string"
+                      },
+                      "refresh_token": {
+                        "type": "string"
+                      },
+                      "scope": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (token data missing or malformed)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Authentication - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/spotify/unlink_account": {
+      "delete": {
+        "summary": "Deletes any Spotify token saved for the current user",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (no token data saved)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Authentication - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/": {
+      "get": {
+        "summary": "Retrieves API users",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized (user is not authenticated)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{userID}": {
+      "get": {
+        "summary": "Retrieves an API user by their ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "404": {
+            "description": "Not found (user doesn't exist)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{userID}/spotify/profile": {
+      "get": {
+        "summary": "Retrieves user Spotify profile by their API ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "404": {
+            "description": "Not found (user doesn't exist)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Users - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{userID}/spotify/currently_playing": {
+      "get": {
+        "description": "Note: a user can only retrieve their own data",
+        "summary": "Retrieves user Spotify current activity by their API ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "403": {
+            "description": "Forbidden (not allowed to access this resource)"
+          },
+          "404": {
+            "description": "Not found (user doesn't exist)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Users - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{userID}/spotify/play": {
+      "put": {
+        "description": "Note: a user can only alter the playback state of their own account",
+        "summary": "Starts playing on the user's Spotify active device",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the user"
+          }
+        ],
+        "requestBody": {
+          "description": "Spotify track URIs to be played",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uris": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 50,
+                    "example": [
+                      "spotify:track:5UWJxql2C2VNLAusOQRjt1"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No content (success)"
+          },
+          "400": {
+            "description": "Bad request (no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "403": {
+            "description": "Forbidden (not allowed to access this resource)"
+          },
+          "404": {
+            "description": "Not found (user doesn't exist)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Users - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{userID}/spotify/saved_tracks": {
+      "get": {
+        "summary": "Retrieves a user Spotify liked tracks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "404": {
+            "description": "Not found (user doesn't exist)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Users - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{userID}/spotify/saved_tracks/personality": {
+      "get": {
+        "summary": "Returns the average data of all of a user Spotify liked tracks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "404": {
+            "description": "Not found (user doesn't exist)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Users - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{userID}/spotify/top_tracks": {
+      "get": {
+        "summary": "Retrieves a user Spotify top tracks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "404": {
+            "description": "Not found (user doesn't exist)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Users - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{userID}/spotify/playlists": {
+      "post": {
+        "description": "Note: a user can only alter the data of their own Spotify account",
+        "summary": "Creates a new playlist on the user's Spotify account",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the user"
+          }
+        ],
+        "requestBody": {
+          "description": "Name and description of the Spotify playlist to be created",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Name of the playlist (optional)",
+                    "type": "string",
+                    "example": "A super empty playlist !"
+                  },
+                  "description": {
+                    "description": "Description of the playlist (optional)",
+                    "type": "string",
+                    "example": "A super description for an empty playlist !"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created (success)"
+          },
+          "400": {
+            "description": "Bad request (no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "403": {
+            "description": "Forbidden (not allowed to access this resource)"
+          },
+          "404": {
+            "description": "Not found (user doesn't exist)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Users - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{userID}/spotify/playlists/{playlistID}": {
+      "post": {
+        "description": "Note: a user can only alter the data of their own Spotify account",
+        "summary": "Adds tracks to a user Spotify playlist",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "API ID of the user"
+          },
+          {
+            "in": "path",
+            "name": "playlistID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Spotify ID of the playlist"
+          }
+        ],
+        "requestBody": {
+          "description": "Spotify track URIs to be played",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "uris"
+                ],
+                "properties": {
+                  "uris": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 50,
+                    "example": [
+                      "spotify:track:5UWJxql2C2VNLAusOQRjt1"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created (success)"
+          },
+          "400": {
+            "description": "Bad request (no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "403": {
+            "description": "Forbidden (not allowed to access this resource)"
+          },
+          "404": {
+            "description": "Not found (user doesn't exist)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Users - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups": {
+      "get": {
+        "summary": "Retrieves API user groups",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Creates a new API user group",
+        "requestBody": {
+          "description": "Group data",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupname": {
+                    "type": "string",
+                    "description": "Name of the new group",
+                    "example": "Ratio Tony <3"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created (success)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupID}": {
+      "get": {
+        "summary": "Retrieves an API user group by their ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the group"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "404": {
+            "description": "Not found (group doesn't exist)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Deletes a group by its ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the group"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (group doesn't exist)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "403": {
+            "description": "Forbidden (only a group admin can delete a group)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupID}/members": {
+      "post": {
+        "summary": "Adds a new member to a group",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the group"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "description": "ID of the user to add to the group"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (user ID missing, or group/user doesn't exist)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "403": {
+            "description": "Fordidden (a user is only allowed to add themselves to a group)"
+          },
+          "409": {
+            "description": "Conflict (user already member of the group)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Removes a member from a group",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the group"
+          },
+          {
+            "in": "query",
+            "name": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the user to remove from the group"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (group/user doesn't exist)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "403": {
+            "description": "Fordidden (group member can only be removed by themselves or a group admin)"
+          },
+          "409": {
+            "description": "Conflict (user already member of the group)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupID}/spotify/synchronize": {
+      "get": {
+        "summary": "Synchronizes all members' players of a group to the admin's Spotify player state",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the group"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content (success)"
+          },
+          "400": {
+            "description": "Bad request (group/user doesn't exist or no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "403": {
+            "description": "Fordidden (only a group admin can start the synchronization)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupID}/spotify/top-tracks": {
+      "get": {
+        "summary": "Retrieves the top tracks of all the group members",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the group"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (group/user doesn't exist or no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "403": {
+            "description": "Fordidden (only a group member can access this resource)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupID}/spotify/playlists/from-top-tracks": {
+      "post": {
+        "summary": "Creates a playlist made of a number of a group's members top tracks, on the Spotify account of the authenticated user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the group"
+          }
+        ],
+        "requestBody": {
+          "description": "Name and description of the Spotify playlist to be created",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "playlist_name": {
+                    "description": "Name of the playlist (optional)",
+                    "type": "string",
+                    "example": "A super group playlist !"
+                  },
+                  "playlist_description": {
+                    "description": "Description of the playlist (optional)",
+                    "type": "string",
+                    "example": "What the fuck"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad request (group/user doesn't exist or no Spotify Account linked)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "403": {
+            "description": "Fordidden (only a group member can access this resource)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups - Spotify"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
 }

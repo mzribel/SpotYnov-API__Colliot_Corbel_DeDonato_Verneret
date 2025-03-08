@@ -75,12 +75,12 @@ export class UserController {
 
     public createSpotifyPlaylist = async (req: Request, res: Response, next: NextFunction) => {
         const user = this.userService.getUserByIDOrExplode(req.params.userID);
-
         if (req.user?.id != user.Id) {
             throw new ApiError(403, "A user can only create a playlist on their own account.")
         }
-
-        const response = await this.userSpotifyService.createUserPlaylist(user, "Mes couilles en ski", "tony jtm")
+        const name:string = req.body.name;
+        const description:string = req.body.description;
+        const response = await this.userSpotifyService.createUserPlaylist(user, name, description)
         ResponseService.handleSuccessResponse(res, response, 201)
     }
 

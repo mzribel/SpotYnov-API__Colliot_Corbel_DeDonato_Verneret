@@ -71,7 +71,7 @@ export class GroupService {
 
         // User is already member
         if (group.memberExists(user.Id)) {
-            throw new ApiError(400, "User is already a member of this group.");
+            throw new ApiError(409, "User is already a member of this group.");
         }
 
         // Delete user from all other groups

@@ -138,10 +138,9 @@ export class UserSpotifyService {
         }
     }
 
-    async createUserPlaylist(user:User, name="", description?:string) {
+    async createUserPlaylist(user:User, name:string, description?:string) {
         const user_data = await this.getUserSpotifyProfile(user);
         name = name.trim();
-        if (!name) { name = `${user.Username}'s playlist`}
         return this.userRequest(user, (token:string) => this.spotifyApiService.createPlaylist(token, user_data.id, name, description))
     }
 
