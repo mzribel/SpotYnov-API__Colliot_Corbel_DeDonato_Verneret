@@ -54,7 +54,6 @@ export class UserSpotifyService {
         return newTokenData.AccessToken;
     }
 
-    // TODO : Ne jamais re-regarder ce TODO
     public async linkSpotifyAccount(user:User, spotify_token_data:any) {
         const token_data = SpotifyTokenData.fromObject(spotify_token_data)
 
@@ -65,7 +64,6 @@ export class UserSpotifyService {
         // Modifies but **doesn't save** user data and retrieves Spotify Profile.
         // We retrieve the profile to check the token validity!
         user.setSpotifyData(token_data, "", "");
-        console.log(user)
         const user_data = await this.getUserSpotifyProfile(user);
 
         // If profile has successfully been retrieved, we save the token in json file.

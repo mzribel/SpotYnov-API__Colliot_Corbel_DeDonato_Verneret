@@ -45,12 +45,6 @@ export class SpotifyTokenData {
         // @ts-ignore   TODO: Pourquoi j'ai mis ça ?
         return Date.now() < new Date((this.issued_at+this.expires_in)*1000);
     }
-
-    public static refreshToken(refresh_token:SpotifyTokenData) {
-
-    }
-
-
 }
 
 export interface SpotifyTokenResponseDTO {

@@ -51,7 +51,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\":\"username\",\r\n    \"password\":\"password\"\r\n}",
+							"raw": "{\r\n    \"username\":\"login\",\r\n    \"password\":\"password\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -85,15 +85,15 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/spotify/auth",
+							"raw": "http://localhost:3000/auth/spotify",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"spotify",
-								"auth"
+								"auth",
+								"spotify"
 							]
 						}
 					},
@@ -133,7 +133,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "// Vous pouvez directement coller le retour de /auth/spotify/callback\r\n{\r\n    \"data\":{\r\n        \"access_token\":\"<access_token>\",\r\n        \"token_type\":\"Bearer\",\r\n        \"expires_in\":3600,\r\n        \"refresh_token\":\"<refresh_token>\",\r\n        \"scope\":\"<scope>\"\r\n    }\r\n}",
+							"raw": "{\"data\":{\"access_token\":\"BQBHlrLt0GHJYgszNiuHQSrGalMB_UBxdhb2UtvHzv74P_whsQud4364Ihq8VO9Q3q291nX6VVkE0DMXtBrQ2htt4zRB3ZaU9wHiJyvej6ufLM2R0JqP-HqmbEli0jayHntibkuZclWqdW2DciX7zJ7TA4q8dc1jhougwUDLhLv1A77jCZAGgjOVL5BRiVOdMwFCnyYKlo7muMkLmgUI_Aw6KYcYuXFItU2HFzhQoBL_6Oa_H1R1ocSSPpo-e42xlDNz_NXNJ7Oizi1Z4SBX88fhzpF8SyeFmA7RNlmJm0_FYQ\",\"token_type\":\"Bearer\",\"expires_in\":3600,\"refresh_token\":\"AQBG14YUCHM9C11aNjDTLKsJXa7fUpzhkgs9_0Eh7Bpq33AktRtj9rLv1PIzaCjO7a1eAKe4DP5eKK6oT8W9KrvXTL4RbI0oQHSXea407ivDX6CnUmdrxJnQjmYyE76KhlU\",\"scope\":\"user-modify-playback-state user-library-read user-library-modify playlist-modify-private playlist-modify-public user-read-playback-state user-read-currently-playing user-top-read\"}}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -343,7 +343,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/users/[id]/spotify/profile",
+							"raw": "http://localhost:3000/users/4/spotify/profile",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -351,7 +351,7 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"[id]",
+								"4",
 								"spotify",
 								"profile"
 							]
@@ -408,7 +408,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/users/[id]/spotify/play",
+							"raw": "http://localhost:3000/users/6/spotify/play",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -416,7 +416,7 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"[id]",
+								"6",
 								"spotify",
 								"play"
 							]
@@ -436,7 +436,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/users/[id]/spotify/saved_tracks/",
+							"raw": "http://localhost:3000/users/6/spotify/saved_tracks/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -444,7 +444,7 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"[id]",
+								"6",
 								"spotify",
 								"saved_tracks",
 								""
@@ -454,18 +454,18 @@
 					"response": []
 				},
 				{
-					"name": "/users/[id]/spotify/top_tracks",
+					"name": "/users/[id]/spotify/saved_tracks",
 					"request": {
-						"method": "GET",
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhdGhnYXRlIiwiaWQiOiIxIiwiaWF0IjoxNzQwOTU1NDk0LCJleHAiOjE3NDEwNDE4OTR9.qly8vZRgGl7OGIkHDSBIKFedgq3YpVhp2khqPtI7438",
+								"value": "Bearer <token>",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/users/[id]/spotify/top_tracks",
+							"raw": "http://localhost:3000/users/6/spotify/saved_tracks?from_end=true&amount=50",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -473,9 +473,19 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"[id]",
+								"6",
 								"spotify",
-								"top_tracks"
+								"saved_tracks"
+							],
+							"query": [
+								{
+									"key": "from_end",
+									"value": "true"
+								},
+								{
+									"key": "amount",
+									"value": "50"
+								}
 							]
 						}
 					},
@@ -493,7 +503,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/users/[id]/spotify/saved_tracks/personality",
+							"raw": "http://localhost:3000/users/1/spotify/saved_tracks/personality",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -501,10 +511,38 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"[id]",
+								"1",
 								"spotify",
 								"saved_tracks",
 								"personality"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/[id]/spotify/top_tracks",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/users/6/spotify/top_tracks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"6",
+								"spotify",
+								"top_tracks"
 							]
 						}
 					},
@@ -522,7 +560,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/users/[id]/spotify/playlists",
+							"raw": "http://localhost:3000/users/1/spotify/playlists",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -530,7 +568,7 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"[id]",
+								"1",
 								"spotify",
 								"playlists"
 							]
@@ -722,7 +760,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/groups/4",
+							"raw": "http://localhost:3000/groups/9",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -730,7 +768,7 @@
 							"port": "3000",
 							"path": [
 								"groups",
-								"4"
+								"9"
 							]
 						}
 					},
@@ -857,19 +895,20 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "TODO",
-			"item": [
+				},
 				{
-					"name": "/groups/[id]/playlists/from_top_tracks",
+					"name": "/groups/[id]/spotify/top-tracks",
 					"request": {
-						"method": "POST",
-						"header": [],
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:3000/groups/[id]/playlists/from_top_tracks",
+							"raw": "http://localhost:3000/groups/9/spotify/top-tracks",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -877,15 +916,48 @@
 							"port": "3000",
 							"path": [
 								"groups",
-								"[id]",
+								"9",
+								"spotify",
+								"top-tracks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/groups/[id]/spotify/playlists/from-top-tracks",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/groups/9/spotify/playlists/from-top-tracks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"groups",
+								"9",
+								"spotify",
 								"playlists",
-								"from_top_tracks"
+								"from-top-tracks"
 							]
 						}
 					},
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Swagger",
+			"item": []
 		},
 		{
 			"name": "/route_vers_le_coeur_de_tony",

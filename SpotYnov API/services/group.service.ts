@@ -60,8 +60,7 @@ export class GroupService {
 
         return newGroup;
     }
-
-    // TODO : Conditions
+    
     public addMemberToGroup = (userID:string, groupID:string, groupsData?:GroupsData, saveToFile:boolean=true) => {
         if (!groupsData) groupsData = this.groupDAO.readFile();
 
