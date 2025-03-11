@@ -35,9 +35,19 @@ export class GroupController {
         })
         ResponseService.handleSuccessResponse(res, groupsDTO)
     }
-    public createGroup = async (req: Request, res: Response, next: NextFunction) => {
-        const group = this.groupService.createGroup(req.body.groupname ?? "", req.user?.id ?? "");
-        ResponseService.handleSuccessResponse(res, group)
+    public createOrJoinGroup = async (req: Request, res: Response, next: NextFunction) => {
+        let group_name:string = req.body.groupname ?? "";
+        const existingGroup:Group|null = this.groupService.getGroupByName(group_name);
+        console.log(existingGroup)
+        if (existingGroup) {
+            const group:Group = this.groupService.addMemberToGroup(req.user?.id ?? "", existingGroup.Id);
+            ResponseService.handleSuccessResponse(res, {
+                message:`Successfully added user to group ${group.Id} (${group.Name}).`
+            })
+        } else {
+            const group:Group = this.groupService.createGroup(req.body.groupname ?? "", req.user?.id ?? "");
+            ResponseService.handleSuccessResponse(res, group)
+        }
     }
 
     public deleteGroup = async (req: Request, res: Response, next: NextFunction) => {
@@ -117,5 +127,18 @@ export class GroupController {
 
         const topTracks = await this.groupSpotifyService.getMembersTopTracks(group);
         ResponseService.handleSuccessResponse(res, topTracks, 200)
+    }
+
+    public getGroupMembers = async (req: Request, res: Response, next: NextFunction) => {
+        const group_id = req.params.groupID;
+        const group = this.groupService.getGroupByID(group_id);
+        if (!group) { throw new ApiError(400, "Group doesn't exist.") }
+
+        if (!group.memberExists(req.user?.id ?? "")) {
+            throw new ApiError(403, "User is not a member of the group.")
+        }
+
+        const members = await this.groupSpotifyService.getGroupMembersWithSpotifyData(group);
+        ResponseService.handleSuccessResponse(res, members, 200)
     }
 }

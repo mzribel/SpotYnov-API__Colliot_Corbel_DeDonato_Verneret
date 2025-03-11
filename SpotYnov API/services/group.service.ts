@@ -15,6 +15,12 @@ export class GroupService {
         return groups.find((group) => { return group.Id == groupID }) ?? null;
     }
 
+    public getGroupByName = (groupName:string):Group|null => {
+        const groups = this.groupDAO.getAllGroups();
+        groupName = groupName.trim();
+        return groups.find((group:Group) => { return group.Name.toLowerCase() == groupName.toLowerCase() }) ?? null;
+    }
+
     public getGroupDTOByID = (groupID:string, show_members:boolean=false):GroupDTO | null => {
         const groups = this.groupDAO.getAllGroups();
 
