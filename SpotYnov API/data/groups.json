@@ -1,0 +1,39 @@
+{
+  "auto_increment": 11,
+  "groups": {
+    "8": {
+      "id": "8",
+      "name": "rathgate's group",
+      "members": [
+        {
+          "id": "4",
+          "isAdmin": true
+        }
+      ]
+    },
+    "9": {
+      "id": "9",
+      "name": "test",
+      "members": [
+        {
+          "id": "6",
+          "isAdmin": false
+        },
+        {
+          "id": "1",
+          "isAdmin": true
+        }
+      ]
+    },
+    "10": {
+      "id": "10",
+      "name": "Ratio Tony <3",
+      "members": [
+        {
+          "id": "2",
+          "isAdmin": false
+        }
+      ]
+    }
+  }
+}

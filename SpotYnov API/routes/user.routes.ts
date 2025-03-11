@@ -8,9 +8,11 @@ import { UserDAO } from "../daos/user.dao";
 import {UserSpotifyService} from "../services/user.spotify.service";
 import {SpotifyAuthService} from "../services/spotify/spotify.auth.service";
 import {SpotifyApiService} from "../services/spotify/spotify.api.service";
+import {GroupDAO} from "../daos/group.dao";
 
 const userDAO = new UserDAO();
-const userService = new UserService(userDAO);
+const groupDAO = new GroupDAO();
+const userService = new UserService(userDAO, groupDAO);
 const spotifyAuthService = new SpotifyAuthService();
 const spotifyApiService = new SpotifyApiService();
 const userSpotifyService = new UserSpotifyService(userService, spotifyAuthService, spotifyApiService);
@@ -28,4 +30,5 @@ router.get("/:userID/spotify/top_tracks", authenticateUser, userController.getUs
 
 router.post("/:userID/spotify/playlists/", authenticateUser, userController.createSpotifyPlaylist)
 router.post("/:userID/spotify/playlists/:playlistID", authenticateUser, userController.addToUserPlaylist)
+
 export default router

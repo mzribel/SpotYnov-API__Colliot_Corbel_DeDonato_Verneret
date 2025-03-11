@@ -4,10 +4,13 @@ import { isPasswordValid, isUsernameValid } from "../utils/validation.util";
 import { hashPassword } from "../utils/auth.util";
 import { ApiError } from "../utils/error.util";
 import {UserDAO} from "../daos/user.dao";
+import {GroupDAO} from "../daos/group.dao";
+import {Group} from "../models/Group";
 
 export class UserService {
     constructor(
-        private userDAO: UserDAO
+        private userDAO: UserDAO,
+        private groupDAO: GroupDAO,
     ) {}
 
     public userExists = async (username:string, userData?:UsersData):Promise<boolean> => {
@@ -88,6 +91,8 @@ export class UserService {
         this.userDAO.updateUser(user);
     }
 
-
+    public getGroupByUserID(userID:string, userData?:UsersData):Group|null {
+        return this.groupDAO.getAllGroups().find(group => group.memberExists(userID)) ?? null;
+    }
 }
 

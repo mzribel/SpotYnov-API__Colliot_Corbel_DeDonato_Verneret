@@ -122,6 +122,6 @@ export class GroupDTO {
     }
     set Members(members:any[]) {
         this.members = members;
-        this.member_count = undefined;
+        this.member_count = members.length;
     }
 }
