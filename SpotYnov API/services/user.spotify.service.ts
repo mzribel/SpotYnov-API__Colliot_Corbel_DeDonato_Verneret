@@ -71,6 +71,16 @@ export class UserSpotifyService {
         return user_data;
     }
 
+    async getUserWithSpotifyProfile(user:User) {
+        const spotify_profile = this.getUserSpotifyProfile(user).catch(()=>{return null});
+        return {
+            ...user,
+            spotify: {
+                profile: spotify_profile,
+            }
+        }
+    }
+
     async getUserSpotifyProfile(user:User): Promise<SpotifyUserDTO> {
         return this.userRequest(user, (token) => this.spotifyApiService.getSpotifyProfile(token))
     }
@@ -155,10 +165,3 @@ export class UserSpotifyService {
         return this.userRequest(user, (token:string) => this.spotifyApiService.getPlaylist(token, id))
     }
 }
-
-
-
-
-
-
-

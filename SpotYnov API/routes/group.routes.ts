@@ -30,11 +30,12 @@ const groupSpotifyService = new GroupSpotifyService(groupService, userSpotifySer
 const groupController = new GroupController(groupService, groupSpotifyService);
 
 router.get("/", authenticateUser, groupController.getGroupsData);
-router.post("/", authenticateUser, groupController.createGroup);
+router.post("/", authenticateUser, groupController.createOrJoinGroup);
 
 router.get("/:groupID", authenticateUser, groupController.getGroupData);
 router.delete("/:groupID", authenticateUser, groupController.deleteGroup);
 
+router.get("/:groupID/members", authenticateUser, groupController.getGroupMembers);
 router.post("/:groupID/members", authenticateUser, groupController.addGroupMember);
 router.delete("/:groupID/members/:userID", authenticateUser, groupController.deleteGroupMember);
 

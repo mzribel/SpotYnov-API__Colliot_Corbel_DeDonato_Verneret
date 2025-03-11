@@ -91,7 +91,7 @@ export class User {
         let spotify_data_dto = this.spotify_data ?
             { id: this.spotify_data.id, display_name: this.spotify_data.display_name} :
             undefined;
-        return new UserDTO(this.id, this.username, spotify_data_dto);
+        return new UserDTO(this.id, this.username);
     }
 
     static fromObject(obj:Object):User {
@@ -110,21 +110,10 @@ export class User {
 export class UserDTO {
     public id:string
     public username:string
-    public spotify_data?:{
-        id:string,
-        display_name:string,
-    }
-    public constructor(id:string,username:string, spotify_data?:{id:string,display_name:string}) {
+
+    public constructor(id:string,username:string) {
         this.id = id;
         this.username = username;
-        this.spotify_data = spotify_data
-    }
-
-    public static fromUser(user:UserDTO) {
-        let spotify_data_dto = user.spotify_data ?
-            { id: user.spotify_data.id, display_name: user.spotify_data.display_name} :
-            undefined;
-        return new UserDTO(user.id, user.username, spotify_data_dto);
     }
 }
 

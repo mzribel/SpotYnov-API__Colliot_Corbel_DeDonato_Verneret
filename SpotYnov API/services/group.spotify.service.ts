@@ -62,4 +62,22 @@ export class GroupSpotifyService {
         // Retrieves full playlist data
         return await this.userSpotifyService.getUserPlaylist(target_user, playlist_id);
     }
+
+public async getGroupMembersWithSpotifyData(group:Group) {
+    const users:User[] = this.groupService.getGroupUsers(group);
+    let members:object[] = [];
+    for (const user of users) {
+        const spotify_profile = await this.userSpotifyService.getUserSpotifyProfile(user).catch(()=>{return null});
+        const spotify_playbackstate = await this.userSpotifyService.getUserSpotifyCurrentlyPlayingTrack(user).catch(()=>{return null});
+        members.push({
+            ...user.toDTO(),
+            isAdmin: group.getAdminID == user.Id,
+            spotify: {
+                profile: spotify_profile,
+                playback_state: spotify_playbackstate
+            }
+        });
+    }
+    return members;
+}
 }
