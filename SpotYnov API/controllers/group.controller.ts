@@ -103,19 +103,6 @@ export class GroupController {
         ResponseService.handleSuccessResponse(res, null, 204)
     }
 
-    public createPlaylistFromMembersTopTracks = async (req: Request, res: Response, next: NextFunction) => {
-        const group = this.groupService.getGroupByID(req.params.groupID);
-        if (!group) { throw new ApiError(400, "Group doesn't exist.") }
-
-        const user = this.groupService.getGroupUsers(group).find((user:User)=>user.Id == req.user?.id)
-        if (!user) { throw new ApiError(403, "User is not a member of the group.") }
-
-        let playlist_name:string = req.body.playlist_name;
-        const playlist_description:string = req.body.playlist_description;
-        const response = await this.groupSpotifyService.createPlaylistFromMembersTopTracks(group, user, playlist_name, playlist_description);
-        ResponseService.handleSuccessResponse(res, response, 201)
-    }
-
     public getMembersTopTracks = async (req: Request, res: Response, next: NextFunction) => {
         const group_id = req.params.groupID;
         const group = this.groupService.getGroupByID(group_id);
