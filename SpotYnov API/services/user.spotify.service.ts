@@ -154,6 +154,69 @@ export class UserSpotifyService {
         return this.userRequest(user, (token:string) => this.spotifyApiService.createPlaylist(token, user_data.id, name, description))
     }
 
+    async createPlaylistFromUserGroup(user:User, playlist_name:string, playlist_description?:string, limit:number=10) {
+        if (!user.hasSpotifyTokenData()) { throw new ApiError(400, "User has not linked any Spotify account.") }
+
+        const group = this.userService.getGroupByUserID(user.Id);
+        if (!group) { throw new ApiError(400, "User does not belong to any group."); }
+        let uris:string[] = [];
+
+        // Retrieves saved tracks for group members
+        for (const member of group.members) {
+            let current_user:User|null = this.userService.getUserById(member.Id);
+            if (!current_user) { continue; }
+
+            uris = [...uris, ...(await this.requestTopTracks(current_user, limit)).map((obj:SpotifyTrackDTO):string => obj.uri)]
+        }
+        if (!uris.length) { throw new ApiError(400, "No tracks found."); }
+
+        // Create playlist
+        if (!playlist_name) playlist_name = `${group.Name}'s playlist`;
+        const playlist_data = await this.createUserPlaylist(user, playlist_name, playlist_description);
+        const playlist_id:string = playlist_data.id ?? "";
+
+        // TODO: move to addTrackToPlaylist
+        // Splits tracks in sendable chunks
+        const splittedTracks: string[][] = [];
+        for (let i = 0; i < uris.length; i += 5) {
+            splittedTracks.push(uris.slice(i, i + 5));
+        }
+        // Add chunks of track uris to playlist
+        for (const chunk of splittedTracks) {
+            await this.addToUserPlaylist(user, playlist_id, chunk)
+        }
+
+        // Retrieves full playlist data
+        return await this.getUserPlaylist(user, playlist_id);
+    }
+
+    async createPlaylistFromUser(user:User, source_user:User, playlist_name:string, playlist_description:string, limit=10) {
+        if (!user.hasSpotifyTokenData()) { throw new ApiError(400, "User has not linked any Spotify account.") }
+        if (!source_user.hasSpotifyTokenData()) { throw new ApiError(400, "User to create playlist from has not linked any Spotify account.") }
+
+        let uris:string[] = (await this.requestTopTracks(source_user, limit)).map((obj:SpotifyTrackDTO):string => obj.uri);
+        if (!uris.length) { throw new ApiError(400, "No tracks found."); }
+
+        // Create playlist
+        if (!playlist_name) playlist_name = `${source_user.Username}'s top tracks playlist`;
+        const playlist_data = await this.createUserPlaylist(user, playlist_name, playlist_description);
+        const playlist_id:string = playlist_data.id ?? "";
+
+        // TODO: move to addTrackToPlaylist
+        // Splits tracks in sendable chunks
+        const splittedTracks: string[][] = [];
+        for (let i = 0; i < uris.length; i += 5) {
+            splittedTracks.push(uris.slice(i, i + 5));
+        }
+        // Add chunks of track uris to playlist
+        for (const chunk of splittedTracks) {
+            await this.addToUserPlaylist(user, playlist_id, chunk)
+        }
+
+        // Retrieves full playlist data
+        return await this.getUserPlaylist(user, playlist_id);
+    }
+
     async addToUserPlaylist(user:User, playlist_id:string, uris:string[]) {
         return this.userRequest(user, (token:string) => this.spotifyApiService.addToPlaylist(token, playlist_id, uris))
     }

@@ -7,10 +7,12 @@ import {UserService} from "../services/user.service";
 import {UserDAO} from "../daos/user.dao";
 import {SpotifyApiService} from "../services/spotify/spotify.api.service";
 import {UserSpotifyService} from "../services/user.spotify.service";
+import {GroupDAO} from "../daos/group.dao";
 
 // User dependancies
 const userDAO = new UserDAO();
-const userService = new UserService(userDAO);
+const groupDAO = new GroupDAO();
+const userService = new UserService(userDAO, groupDAO);
 // Spotify dependancies
 const spotifyAPIService = new SpotifyApiService()
 const spotifyAuthService = new SpotifyAuthService();

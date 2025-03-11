@@ -12,6 +12,6 @@ export const handleErrors = (err:Error|ApiError, req:Request, res:Response, next
         // console.log(err)
         return ResponseService.handleErrorResponse(res, err.status ?? 500, error_msg);
     }
-
+console.log(err);
     return ResponseService.handleErrorResponse(res, 500, "Internal Server Error.")
 }

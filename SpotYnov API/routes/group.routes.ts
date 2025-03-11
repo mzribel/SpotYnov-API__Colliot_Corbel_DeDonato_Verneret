@@ -13,7 +13,8 @@ const router = express.Router();
 
 // User DAO & Service
 const userDAO = new UserDAO();
-const userService = new UserService(userDAO);
+const groupDAO = new GroupDAO();
+const userService = new UserService(userDAO, groupDAO);
 // Spotify Services
 const spotifyAuthService = new SpotifyAuthService();
 const spotifyApiService = new SpotifyApiService();
@@ -21,7 +22,6 @@ const spotifyApiService = new SpotifyApiService();
 const userSpotifyService = new UserSpotifyService(userService, spotifyAuthService, spotifyApiService);
 
 // Group DAO & Service
-const groupDAO = new GroupDAO();
 const groupService = new GroupService(groupDAO, userService);
 // Group & Spotify Service
 const groupSpotifyService = new GroupSpotifyService(groupService, userSpotifyService);

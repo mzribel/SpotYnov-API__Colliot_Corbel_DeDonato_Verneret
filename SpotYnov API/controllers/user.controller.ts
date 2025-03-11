@@ -4,12 +4,15 @@ import {ApiError} from "../utils/error.util";
 import { ResponseService } from "../services/api/response.service";
 import {UserSpotifyService} from "../services/user.spotify.service";
 import {SpotifyTrackDTO} from "../dtos/spotify.track.dto";
+import {GroupSpotifyService} from "../services/group.spotify.service";
+import {GroupService} from "../services/group.service";
 
 export class UserController {
     // Dependancy Injection
     constructor(
         private userService:UserService,
-        private userSpotifyService:UserSpotifyService) {}
+        private userSpotifyService:UserSpotifyService
+    ) {}
 
     public getUserData = async (req: Request, res: Response, next: NextFunction) => {
         // Retrieve path parameters
@@ -78,10 +81,34 @@ export class UserController {
         if (req.user?.id != user.Id) {
             throw new ApiError(403, "A user can only create a playlist on their own account.")
         }
-        const name:string = req.body.name;
-        const description:string = req.body.description;
-        const response = await this.userSpotifyService.createUserPlaylist(user, name, description)
-        ResponseService.handleSuccessResponse(res, response, 201)
+
+        const name:string = req.body.name ?? "";
+        const description:string = req.body.description ?? "";
+        let result:any;
+        // A partir d'un groupe
+        if (req.query.from == "group") {
+            result = await this.userSpotifyService.createPlaylistFromUserGroup(user, name, description)
+
+        // A partir d'un utilisateur
+        } else if (req.query.from == "user") {
+            const source_user_id = req.body.user_id;
+            let source_user;
+            // No user_id in body = using authenticated user as source
+            if (!source_user_id) {
+                source_user = this.userService.getUserByIDOrExplode(req.user.id);
+            // Else, retrieves user associated to user_id
+            } else {
+                source_user = this.userService.getUserById(source_user_id);
+                if (!source_user) { throw new ApiError(400, "User to create playlist from doesn't exist."); }
+            }
+            result = await this.userSpotifyService.createPlaylistFromUser(user, source_user, name, description)
+
+        // Playlist vide ou à partir d'uris
+        // TODO : à partir d'URI
+        } else {
+            result = await this.userSpotifyService.createUserPlaylist(user, name, description)
+        }
+        ResponseService.handleSuccessResponse(res, result, 201)
     }
 
     public addToUserPlaylist = async (req: Request, res: Response, next: NextFunction) => {
