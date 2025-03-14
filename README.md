@@ -1,6 +1,6 @@
 # TP 3 - SpotYnov API
 
-Rendu du TP 3 du cours de développement back-end par **Théo Colliot-Martinez**, **Marianne Corbel**, **Tony De Donato** et **Nils Verneret**.
+Rendu du TP 3 du cours de développement back-end par **Théo Colliot--Martinez**, **Marianne Corbel**, **Tony De Donato** et **Nils Verneret**.
 
 ## Prérequis 
 
