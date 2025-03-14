@@ -14,23 +14,21 @@ export class GroupController {
     ) {}
 
     public getGroupData = async (req: Request, res: Response, next: NextFunction) => {
-        // God mod
-        const isAdmin = false;
         // Get group
-        const group = this.groupService.getGroupByID(req.params.groupID ?? "");
+        let group;
+        if (req.params.groupID == "me" || !req.params.groupID) { group = this.groupService.getGroupByMemberID(req.user?.id ?? "")}
+        else { group = this.groupService.getGroupByID(req.params.groupID ?? "");}
         if (!group) { throw new ApiError(404, "Group not found.") }
 
-        const show_members:boolean = group.memberExists(req.user?.id ?? "") || isAdmin;
+        const show_members:boolean = group.memberExists(req.user?.id ?? "");
         const groupDTO = this.groupService.groupToDTO(group, show_members);
         ResponseService.handleSuccessResponse(res, groupDTO)
     }
     public getGroupsData = async (req: Request, res: Response, next: NextFunction) => {
-        // God mod
-        const isAdmin = false;
         // Get groups
         const groups = this.groupService.getGroups();
         const groupsDTO:GroupDTO[] = groups.map((group:Group)=> {
-            const show_members:boolean = group.memberExists(req.user?.id ?? "") || isAdmin;
+            const show_members:boolean = group.memberExists(req.user?.id ?? "");
             return this.groupService.groupToDTO(group, show_members);
         })
         ResponseService.handleSuccessResponse(res, groupsDTO)
@@ -38,7 +36,7 @@ export class GroupController {
     public createOrJoinGroup = async (req: Request, res: Response, next: NextFunction) => {
         let group_name:string = req.body.groupname ?? "";
         const existingGroup:Group|null = this.groupService.getGroupByName(group_name);
-        console.log(existingGroup)
+
         if (existingGroup) {
             const group:Group = this.groupService.addMemberToGroup(req.user?.id ?? "", existingGroup.Id);
             ResponseService.handleSuccessResponse(res, {
@@ -51,9 +49,11 @@ export class GroupController {
     }
 
     public deleteGroup = async (req: Request, res: Response, next: NextFunction) => {
-        const group = this.groupService.getGroupByID(req.params.groupID);
-
-        if (!group) { throw new ApiError(400, "Group doesn't exist.") }
+        // Get group
+        let group;
+        if (req.params.groupID == "me") { group = this.groupService.getGroupByMemberID(req.user?.id ?? "")}
+        else { group = this.groupService.getGroupByID(req.params.groupID ?? "");}
+        if (!group) { throw new ApiError(404, "Group not found.") }
         if (group.getAdminID != (req.user?.id ?? "")) { throw new ApiError(403, "Only a group admin can delete a group.") }
 
         this.groupService.deleteGroup(req.params.groupID)
@@ -75,8 +75,11 @@ export class GroupController {
         const user_id = req.params.userID;
         const group_id = req.params.groupID;
 
-        const group = this.groupService.getGroupByID(group_id);
-        if (!group) { throw new ApiError(404, "Group doesn't exist.") }
+        // Get group
+        let group;
+        if (req.params.groupID == "me") { group = this.groupService.getGroupByMemberID(req.user?.id ?? "")}
+        else { group = this.groupService.getGroupByID(req.params.groupID ?? "");}
+        if (!group) { throw new ApiError(404, "Group not found.") }
 
         if (!group.memberExists(user_id)) {
             throw new ApiError(400, "User is not a member of the group.")
@@ -93,9 +96,11 @@ export class GroupController {
     }
 
     public synchronizePlayers = async (req: Request, res: Response, next: NextFunction) => {
-        const group = this.groupService.getGroupByID(req.params.groupID);
-
-        if (!group) { throw new ApiError(400, "Group doesn't exist.") }
+        // Get group
+        let group;
+        if (req.params.groupID == "me") { group = this.groupService.getGroupByMemberID(req.user?.id ?? "")}
+        else { group = this.groupService.getGroupByID(req.params.groupID ?? "");}
+        if (!group) { throw new ApiError(404, "Group not found.") }
         if (group.getAdminID != (req.user?.id ?? "")) { throw new ApiError(403, "Only a group admin can start synchronization.") }
 
         await this.groupSpotifyService.synchronizePlayers(group);
@@ -104,9 +109,11 @@ export class GroupController {
     }
 
     public getMembersTopTracks = async (req: Request, res: Response, next: NextFunction) => {
-        const group_id = req.params.groupID;
-        const group = this.groupService.getGroupByID(group_id);
-        if (!group) { throw new ApiError(400, "Group doesn't exist.") }
+        // Get group
+        let group;
+        if (req.params.groupID == "me") { group = this.groupService.getGroupByMemberID(req.user?.id ?? "")}
+        else { group = this.groupService.getGroupByID(req.params.groupID ?? "");}
+        if (!group) { throw new ApiError(404, "Group not found.") }
 
         if (!group.memberExists(req.user?.id ?? "")) {
             throw new ApiError(403, "User is not a member of the group.")
@@ -117,9 +124,11 @@ export class GroupController {
     }
 
     public getGroupMembers = async (req: Request, res: Response, next: NextFunction) => {
-        const group_id = req.params.groupID;
-        const group = this.groupService.getGroupByID(group_id);
-        if (!group) { throw new ApiError(400, "Group doesn't exist.") }
+        // Get group
+        let group;
+        if (req.params.groupID == "me") { group = this.groupService.getGroupByMemberID(req.user?.id ?? "")}
+        else { group = this.groupService.getGroupByID(req.params.groupID ?? "");}
+        if (!group) { throw new ApiError(404, "Group not found.") }
 
         if (!group.memberExists(req.user?.id ?? "")) {
             throw new ApiError(403, "User is not a member of the group.")
