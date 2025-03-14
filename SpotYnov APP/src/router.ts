@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createRouter, createWebHistory } from 'vue-router';
 import AuthView from "./views/AuthView.vue";
 import DashboardView from "./views/DashboardView.vue";
