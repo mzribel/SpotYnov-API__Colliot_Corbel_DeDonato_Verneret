@@ -19,7 +19,6 @@ export const useGroupStore = defineStore('group', () => {
                 },
             });
             const data = await response.json();
-            // console.log(data.data)
             groups.value = data.data;
         } catch (error) {
             console.error('Erreur lors de la récupération des groupes', error);
@@ -43,7 +42,19 @@ export const useGroupStore = defineStore('group', () => {
         }
     };
 
-    const updateCurrentGroup = () => {
+    const updateCurrentGroup = async () => {
+        try {
+            const response = await fetch(`${apiUrl}/users/me/group`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authStore.token}`,
+                }
+            })
+            const data = await response.json();
+            currentGroup.value = data.data;
+        } catch (error) {
+            console.error('Erreur lors de la récupération du groupe actuel', error);
+        }
 
     }
 
@@ -99,6 +110,7 @@ export const useGroupStore = defineStore('group', () => {
         fetchGroups,
         addGroup,
         updateGroup,
+        updateCurrentGroup,
         deleteGroup,
         joinGroup,
     };

@@ -9,10 +9,10 @@ services:
     environment:
       - NODE_ENV=development
 
-  app:
-    build:
-      context: ./SpotYnov APP
-    ports:
-      - "5173:80" # Mapper le port 5173 vers 80 pour nginx
-    depends_on:
-      - api
+#  app:
+#    build:
+#      context: ./SpotYnov APP
+#    ports:
+#      - "5173:80" # Mapper le port 5173 vers 80 pour nginx
+#    depends_on:
+#      - api

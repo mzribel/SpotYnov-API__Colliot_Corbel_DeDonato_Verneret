@@ -2,7 +2,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AuthView from "./views/AuthView.vue";
 import DashboardView from "./views/DashboardView.vue";
-import PlaylistView from "./views/PlaylistView.vue";
 import GroupView from "./views/GroupView.vue";
 import {useAuthStore} from "./stores/auth.ts";
 
@@ -21,12 +20,6 @@ const routes = [
         path: '/dashboard',
         name: 'Dashboard',
         component: DashboardView,
-        meta: { requiresAuth: true },
-    },
-    {
-        path: '/playlists',
-        name: 'Playlists',
-        component: PlaylistView,
         meta: { requiresAuth: true },
     },
     {

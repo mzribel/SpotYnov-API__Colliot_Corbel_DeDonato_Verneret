@@ -44,20 +44,24 @@ const logout = () => {
   color: white;
   border-bottom: 3px solid #1f1f1f;
 }
+
 .nav-links {
   display: flex;
   gap: 15px;
   align-items: center;
 }
+
 button {
   padding: 8px 12px;
   border: none;
+  min-width: 60px;
   cursor: pointer;
   background: #1f1f1f;
   color: #9d9d9d;
   border-radius: 5px;
   transition: 1s !important;
 }
+
 button:hover {
   background: #656565;
   color: white;
@@ -70,7 +74,6 @@ button:hover {
 .logout:hover{
   background: red;
   transition: 1s;
-
 }
 
 .to-spotify-btn{

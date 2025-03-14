@@ -29,6 +29,7 @@ const deleteUser = (id: string) => {
 <style scoped>
 .users-list {
   max-width: 500px;
+  min-width: 250px;
   text-align: center;
   margin: 10px;
   padding: 20px;

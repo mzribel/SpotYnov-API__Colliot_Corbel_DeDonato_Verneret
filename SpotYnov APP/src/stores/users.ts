@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import {computed, ref} from 'vue';
 import { useAuthStore } from './auth';
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useUserStore = defineStore('user', () => {
     const authStore = useAuthStore();
     const users = ref([]);
-    const userDetail = ref(null);
+    const userDetail = ref("");
+    const userPersonality = ref("");
 
     // Récupérer tous les utilisateurs
     const fetchUsers = async () => {
@@ -39,7 +40,15 @@ export const useUserStore = defineStore('user', () => {
         }
     };
 
+
+    // Récupérer un utilisateur Spotify par ID
     const fetchSpotifyUserById = async (id: string) => {
+        await fetchSpotifyProfile(id);
+        await fetchSpotifyUserPersonalityBySavedTracks(id);
+    }
+
+    // Récupérer le profil Spotify d'un utilisateur
+    const fetchSpotifyProfile = async (id: string) => {
         try {
             const response = await fetch(`${apiUrl}/users/${id}/spotify/profile`, {
                 method: 'GET',
@@ -47,70 +56,38 @@ export const useUserStore = defineStore('user', () => {
                     'Authorization': `Bearer ${authStore.token}`,
                 },
             });
-            userDetail.value = await response.json();
+            const data = await response.json();
+            userDetail.value = data.data;
+            console.log(userDetail.value);
         } catch (error) {
             console.error('Erreur lors de la récupération de l\'utilisateur', error);
         }
     };
 
 
-    // Ajouter un utilisateur
-    const addUser = async (username: string, password: string) => {
+    // Récupérer la personnalité d'un utilisateur Spotify par ses morceaux sauvegardés
+    const fetchSpotifyUserPersonalityBySavedTracks = async (id: string) => {
         try {
-            await fetch('http://localhost:3000/users', {
-                method: 'POST',
+            const response = await fetch(`${apiUrl}/users/${id}/spotify/saved_tracks/personality`, {
+                method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,
-                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
             });
-            fetchUsers(); // Rafraîchir la liste
+            const data = await response.json();
+            userPersonality.value = data.data;
         } catch (error) {
-            console.error('Erreur lors de l\'ajout de l\'utilisateur', error);
+            console.error('Erreur lors de la récupération de l\'utilisateur', error);
         }
     };
 
-    // Modifier un utilisateur
-    const updateUser = async (id: string, username: string, password: string) => {
-        try {
-            await fetch(`${apiUrl}/users/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${authStore.token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
-            fetchUsers();
-        } catch (error) {
-            console.error('Erreur lors de la mise à jour de l\'utilisateur', error);
-        }
-    };
-
-    // Supprimer un utilisateur
-    const deleteUser = async (id: string) => {
-        try {
-            await fetch(`${apiUrl}/users/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${authStore.token}`,
-                },
-            });
-            await fetchUsers();
-        } catch (error) {
-            console.error('Erreur lors de la suppression de l\'utilisateur', error);
-        }
-    };
 
     return {
         users,
-        userDetail,
+        userDetail: computed(() => userDetail.value),
+        userPersonality: computed(() => userPersonality.value),
         fetchUsers,
         fetchUserById,
         fetchSpotifyUserById,
-        addUser,
-        updateUser,
-        deleteUser,
     };
 });

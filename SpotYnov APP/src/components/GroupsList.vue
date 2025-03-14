@@ -27,13 +27,12 @@ onMounted(() => {
 
 <style scoped>
 .groups-list {
-  max-width: 500px;
+  min-width: 500px;
   text-align: center;
   margin: 10px;
   padding: 20px;
   background: #191919;
   border-radius: 20px;
-  gap: 10px !important;
 }
 
 li{
