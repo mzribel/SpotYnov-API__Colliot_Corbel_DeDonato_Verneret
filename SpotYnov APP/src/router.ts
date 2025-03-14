@@ -3,7 +3,7 @@ import AuthView from "./views/AuthView.vue";
 import DashboardView from "./views/DashboardView.vue";
 import PlaylistView from "./views/PlaylistView.vue";
 import GroupView from "./views/GroupView.vue";
-import {useAuthStore} from "./store/auth.ts";
+import {useAuthStore} from "./stores/auth.ts";
 
 
 const routes = [
@@ -29,7 +29,7 @@ const routes = [
         meta: { requiresAuth: true },
     },
     {
-        path: '/groups',
+        path: '/group',
         name: 'Groups',
         component: GroupView,
         meta: { requiresAuth: true },

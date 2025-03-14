@@ -1,10 +1,11 @@
 <template>
   <navbar />
-  <div class="dashboard-view">
-
-    <div class="flex w-full margin-10 justify-center items-center flex-row dashboard">
+  <div class="dashboard-view flex flex-row">
+    <side-bar />
+    <div class="flex w-full margin-10 flex-row dashboard">
       <GroupsList/>
       <UsersList/>
+      <UserProfile/>
     </div>
 
   </div>
@@ -13,6 +14,8 @@
 <style scoped>
 .dashboard-view {
   text-align: center;
+  align-items: start;
+
 }
 nav a {
   margin: 0 10px;
@@ -24,4 +27,6 @@ nav a {
 import Navbar from "../components/Navbar.vue";
 import GroupsList from "../components/GroupsList.vue";
 import UsersList from "../components/UsersList.vue";
+import SideBar from "../components/SideBar.vue";
+import UserProfile from "../components/UserProfile.vue";
 </script>

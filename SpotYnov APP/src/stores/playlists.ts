@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useAuthStore } from './auth';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const usePlaylistStore = defineStore('playlist', () => {
     const authStore = useAuthStore();
@@ -10,7 +11,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
     // Récupérer les playlists de l'utilisateur
     const fetchPlaylists = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/users/${authStore.username}/spotify/playlists`, {
+            const response = await fetch(`${apiUrl}/users/${authStore.username}/spotify/playlists`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,
@@ -25,7 +26,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
     // Récupérer les morceaux favoris de l'utilisateur
     const fetchSavedTracks = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/users/${authStore.username}/spotify/saved_tracks`, {
+            const response = await fetch(`${apiUrl}/users/${authStore.username}/spotify/saved_tracks`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,
@@ -40,7 +41,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
     // Créer une nouvelle playlist
     const createPlaylist = async (playlistName: string) => {
         try {
-            await fetch(`http://localhost:3000/users/${authStore.username}/spotify/playlists`, {
+            await fetch(`${apiUrl}/users/${authStore.username}/spotify/playlists`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,
@@ -57,7 +58,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
     // Ajouter un morceau à une playlist
     const addTrackToPlaylist = async (playlistId: string, trackUri: string) => {
         try {
-            await fetch(`http://localhost:3000/users/${authStore.username}/spotify/playlists/${playlistId}`, {
+            await fetch(`${apiUrl}/users/${authStore.username}/spotify/playlists/${playlistId}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,

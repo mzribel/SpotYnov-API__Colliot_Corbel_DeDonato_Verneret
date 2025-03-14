@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useAuthStore } from './auth';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 export const useGroupPlaylistStore = defineStore('groupPlaylist', () => {
   const authStore = useAuthStore();
   const groupPlaylists = ref([]);
@@ -9,7 +10,7 @@ export const useGroupPlaylistStore = defineStore('groupPlaylist', () => {
   // Récupérer les playlists d'un groupe
   const fetchGroupPlaylists = async (groupId: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/groups/${groupId}/spotify/playlists`, {
+      const response = await fetch(`${apiUrl}/groups/${groupId}/spotify/playlists`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authStore.token}`,
@@ -27,7 +28,7 @@ export const useGroupPlaylistStore = defineStore('groupPlaylist', () => {
   // Créer une playlist pour un groupe
   const createGroupPlaylist = async (groupId: string, playlistName: string) => {
     try {
-      await fetch(`http://localhost:3000/groups/${groupId}/spotify/playlists`, {
+      await fetch(`${apiUrl}/groups/${groupId}/spotify/playlists`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authStore.token}`,
@@ -44,7 +45,7 @@ export const useGroupPlaylistStore = defineStore('groupPlaylist', () => {
   // Synchroniser une playlist avec Spotify
   const syncGroupPlaylist = async (groupId: string) => {
     try {
-      await fetch(`http://localhost:3000/groups/${groupId}/spotify/synchronize`, {
+      await fetch(`${apiUrl}/groups/${groupId}/spotify/synchronize`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authStore.token}`,

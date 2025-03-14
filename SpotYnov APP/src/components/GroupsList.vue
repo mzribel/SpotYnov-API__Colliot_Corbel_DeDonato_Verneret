@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useGroupStore } from '../store/groups';
+import { useGroupStore } from '../stores/groups';
 
 const groupStore = useGroupStore();
-const newGroupName = ref('');
 
 onMounted(() => {
   groupStore.fetchGroups();
@@ -12,16 +11,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="groups-list gap-10">
+  <div class="groups-list">
     <h1>Liste des groupes</h1>
-    <div class="flex justify-between gap-20">
-<!--      <h3>Nom</h3> |-->
-<!--      <h3>Nombre d'utilisateur</h3>-->
-    </div>
     <ul class="pt-10">
-      <li v-for="group in groupStore.groups" :key="group.id" class="flex flex-row justify-between">
-        {{ group.name }}
-        {{ group.members.length }}
+      <li v-for="group in groupStore.groups" :key="group.id" class="group-line flex flex-row justify-between">
+        <p class="min-w-10">{{ group.name }}</p>
+        <div class="flex flex-row gap-3">
+          <p class="flex items-center">{{ group.member_count }} membres</p>
+          <button @click="groupStore.joinGroup(group.id)">Rejoindre</button>
+        </div>
       </li>
     </ul>
   </div>
@@ -34,30 +32,24 @@ onMounted(() => {
   margin: 10px;
   padding: 20px;
   background: #191919;
-  border-radius: 10px;
+  border-radius: 20px;
+  gap: 10px !important;
 }
 
 li{
   padding: 10px;
-  border-top: 1px solid #474747;
+  border-bottom: 1px solid #474747;
 }
 
-
-button {
-  background: red;
-  color: white;
-  padding: 5px;
-  margin-left: 10px;
-  border: none;
-  cursor: pointer;
+.group-line {
+  justify-content: space-between;
+  gap: 10px;
+  display: flex;
+  align-items: center;
 }
 
 h1 {
   color: white;
   font-size: 1.2rem;
-}
-
-h3 {
-  font-size: 1rem;
 }
 </style>

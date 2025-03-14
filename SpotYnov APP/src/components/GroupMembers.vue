@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useAuthStore } from '../store/auth';
+import { useAuthStore } from '../stores/auth';
 import { useRoute } from 'vue-router';
+import * as process from "process";
 
 const authStore = useAuthStore();
 const route = useRoute();
@@ -9,9 +10,11 @@ const groupId = route.params.id;
 const members = ref([]);
 const newMemberId = ref('');
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const fetchMembers = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/groups/${groupId}`, {
+    const response = await fetch(`${apiUrl}/groups/${groupId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
@@ -28,7 +31,7 @@ const addMember = async () => {
   if (!newMemberId.value.trim()) return;
 
   try {
-    await fetch(`http://localhost:3000/groups/${groupId}/members`, {
+    await fetch(`${apiUrl}/groups/${groupId}/members`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
@@ -45,7 +48,7 @@ const addMember = async () => {
 
 const promoteMember = async (memberId: string) => {
   try {
-    await fetch(`http://localhost:3000/groups/${groupId}/members/${memberId}/promote`, {
+    await fetch(`${apiUrl}/groups/${groupId}/members/${memberId}/promote`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,

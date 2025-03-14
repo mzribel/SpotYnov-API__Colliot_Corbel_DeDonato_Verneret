@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { usePlaylistStore } from '../store/playlists';
+import { usePlaylistStore } from '../stores/playlists';
 
 const playlistStore = usePlaylistStore();
 

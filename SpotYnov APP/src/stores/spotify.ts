@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useAuthStore } from './auth';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 export const useSpotifyStore = defineStore('spotify', () => {
     const authStore = useAuthStore();
     const currentlyPlaying = ref(null);
@@ -9,7 +11,7 @@ export const useSpotifyStore = defineStore('spotify', () => {
     // Récupérer la musique en cours de lecture
     const fetchCurrentlyPlaying = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/users/${authStore.username}/spotify/currently_playing`, {
+            const response = await fetch(`${apiUrl}/users/${authStore.username}/spotify/currently_playing`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,
@@ -27,7 +29,7 @@ export const useSpotifyStore = defineStore('spotify', () => {
     // Lire une musique spécifique
     const playTrack = async (trackUri: string, position: number = 0) => {
         try {
-            await fetch(`http://localhost:3000/users/${authStore.username}/spotify/play`, {
+            await fetch(`${apiUrl}/users/${authStore.username}/spotify/play`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,

@@ -2,15 +2,17 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useAuthStore } from './auth';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 export const useGroupStore = defineStore('group', () => {
     const authStore = useAuthStore();
     const groups = ref([]);
+    const currentGroup = ref(null);
     const groupDetail = ref(null);
 
     // Récupérer tous les groupes
     const fetchGroups = async () => {
         try {
-            const response = await fetch('http://localhost:3000/groups', {
+            const response = await fetch(`${apiUrl}/groups`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,
@@ -27,7 +29,7 @@ export const useGroupStore = defineStore('group', () => {
     // Ajouter un groupe
     const addGroup = async (groupname: string) => {
         try {
-            await fetch('http://localhost:3000/groups', {
+            await fetch(`${apiUrl}/groups`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,
@@ -41,10 +43,14 @@ export const useGroupStore = defineStore('group', () => {
         }
     };
 
+    const updateCurrentGroup = () => {
+
+    }
+
     // Modifier un groupe
     const updateGroup = async (id: string, groupname: string) => {
         try {
-            await fetch(`http://localhost:3000/groups/${id}`, {
+            await fetch(`${apiUrl}/groups/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,
@@ -61,7 +67,7 @@ export const useGroupStore = defineStore('group', () => {
     // Supprimer un groupe
     const deleteGroup = async (id: string) => {
         try {
-            await fetch(`http://localhost:3000/groups/${id}`, {
+            await fetch(`${apiUrl}/groups/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`,
@@ -73,12 +79,27 @@ export const useGroupStore = defineStore('group', () => {
         }
     };
 
+    const joinGroup = async (id: string) => {
+        try {
+            await fetch(`${apiUrl}/groups/${id}/join`, {
+                method: 'POST',
+                headers: {
+
+                }
+            });
+        } catch (error) {
+            console.error('Erreur lors de la suppression du groupe', error);
+        }
+    }
+
     return {
         groups,
+        currentGroup,
         groupDetail,
         fetchGroups,
         addGroup,
         updateGroup,
         deleteGroup,
+        joinGroup,
     };
 });

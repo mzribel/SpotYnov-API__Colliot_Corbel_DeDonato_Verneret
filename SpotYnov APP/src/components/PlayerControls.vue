@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useSpotifyStore } from '../store/spotify';
+import { useSpotifyStore } from '../stores/spotify';
 
 const spotifyStore = useSpotifyStore();
 const trackUri = ref('');

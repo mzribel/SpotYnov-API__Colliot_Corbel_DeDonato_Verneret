@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useSpotifyStore } from '../store/spotify';
+import { useSpotifyStore } from '../stores/spotify';
 
 const spotifyStore = useSpotifyStore();
 

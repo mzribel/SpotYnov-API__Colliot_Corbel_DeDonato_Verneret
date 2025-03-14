@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useGroupPlaylistStore } from '../store/groupPlaylists';
+import { useGroupPlaylistStore } from '../stores/groupPlaylists';
 
 const route = useRoute();
 const groupId = route.params.id as string;
