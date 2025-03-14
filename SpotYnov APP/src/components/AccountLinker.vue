@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue';
-import { useAuthStore } from '../store/auth';
+import { useAuthStore } from '../stores/auth';
 
 
 
@@ -13,9 +13,11 @@ const successMessage = ref('');
 
 const spotifyUrl = ref('');
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const retrieveSpotifyUrl = async () => {
   try {
-    const response = await fetch('http://localhost:3000/auth/spotify/', {
+    const response = await fetch(`${apiUrl}/auth/spotify/`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
@@ -47,7 +49,7 @@ const linkSpotifyAccount = async () => {
   successMessage.value = '';
 
   try {
-    const response = await fetch('http://localhost:3000/auth/spotify/link_account', {
+    const response = await fetch(`${apiUrl}/auth/spotify/link_account`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -69,7 +71,7 @@ const unlinkSpotifyAccount = async () => {
   successMessage.value = '';
 
   try {
-    const response = await fetch('http://localhost:3000/auth/spotify/unlink_account', {
+    const response = await fetch(`${apiUrl}/auth/spotify/unlink_account`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
