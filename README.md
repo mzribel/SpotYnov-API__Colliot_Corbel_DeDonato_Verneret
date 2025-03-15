@@ -3,7 +3,6 @@
 Rendu du TP 3 du cours de développement back-end par **Théo Colliot--Martinez**, **Marianne Corbel**, **Tony De Donato** et **Nils Verneret**.
 
 Les commits réalisés après le 15/03 ne concerneront aucune fonctionnalité obligatoire, celles-ci ayant toutes été réalisées dans les temps (gestion de projet et noms des commits).
-Si cela est dérangeant, il est toujours possible de récupérer la [dernière version avant le rendu](https://github.com/mzribel/SpotYnov-API__Colliot_Corbel_DeDonato_Verneret/tree/00de6f8815613cae0ed15ae26855edb4c42b302a).
 
 ## Prérequis 
 
@@ -47,6 +46,7 @@ Dans les deux cas, les modules nodes doivent être installés dans chacun des de
 ### API
 
  L'utilisateur doit renommer le fichier `/SpotYnov_API/.env.example` en `/SpotYnov_API/.env` et y remplir à minima les variables `SPOTIFY_CLIENT_ID` et `SPOTIFY_CLIENT_SECRET` avec les informations liées à l'application spotify créée au préalable (voir prérequis).
+ Il est conseillé de remplacer la variable `JWT_SECRET` par une chaîne de caractères aléatoires suffisamment longue.
 
 Ensuite, le serveur peut être lancé à l'aide de la commande suivante :
 ```
