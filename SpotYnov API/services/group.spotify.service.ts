@@ -19,6 +19,18 @@ export class GroupSpotifyService {
         return this.userSpotifyService.synchronizePlayers(admin, users);
     }
 
+    public async getGroupWithSpotifyData(group:Group, show_playback_state:boolean=false) {
+        let groupDTO = this.groupService.groupToDTO(group, true);
+
+        const users = this.groupService.getGroupUsers(group);
+        groupDTO.members = await Promise.all(users.map(async (user: User) => {
+
+            return await this.userSpotifyService.getUserWithSpotifyData(user, show_playback_state);
+        }));
+
+        return groupDTO;
+    }
+
     public async getMembersTopTracks(group:Group) {
         let userSavedTracks:SpotifyTrackDTO[] = [];
         const users:User[] = this.groupService.getGroupUsers(group);
@@ -28,25 +40,19 @@ export class GroupSpotifyService {
                     userSavedTracks.push(...savedTracks) })
                 .catch((err:Error) => {
                     console.log("Couldn't fetch saved tracks for user "+user.Username);
-                    console.log(err)
                 })
         }
         return userSavedTracks;
     }
 
-    public async getGroupMembersWithSpotifyData(group:Group) {
+    public async getGroupMembersWithSpotifyData(group:Group, show_playback_state:boolean=false) {
         const users:User[] = this.groupService.getGroupUsers(group);
         let members:object[] = [];
         for (const user of users) {
-            const spotify_profile = await this.userSpotifyService.getUserSpotifyProfile(user).catch(()=>{return null});
-            const spotify_playbackstate = await this.userSpotifyService.getUserSpotifyCurrentlyPlayingTrack(user).catch(()=>{return null});
+            const data = await this.userSpotifyService.getUserWithSpotifyData(user, show_playback_state);
             members.push({
-                ...user.toDTO(),
-                isAdmin: group.getAdminID == user.Id,
-                spotify: {
-                    profile: spotify_profile,
-                    playback_state: spotify_playbackstate
-                }
+                ...data,
+                isAdmin: group.getAdminID == user.Id
             });
         }
         return members;

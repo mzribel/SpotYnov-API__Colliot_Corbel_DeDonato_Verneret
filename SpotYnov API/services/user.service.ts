@@ -27,7 +27,7 @@ export class UserService {
 
         // Validate input
         if (!isUsernameValid(username)) throw new ApiError(400,"Invalid username format.")
-        if (!isPasswordValid(password)) throw new ApiError(400, "Invalid password format.")
+        if (!isPasswordValid(password)) throw new ApiError(400, "Invalid password format [at least one uppercase, lowercase, number and special character required].")
 
         // Creates new user
         const newUser = new User(username, hashPassword(password));

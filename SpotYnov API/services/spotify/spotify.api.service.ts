@@ -30,8 +30,6 @@ export class SpotifyApiService {
                 position_ms
             }
         })
-        // TODO: 204 doesn't return any data!
-        return response.data;
     }
 
     async getSavedTracks(access_token:string, offset=0, limit=50) {

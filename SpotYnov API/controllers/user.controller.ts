@@ -4,6 +4,8 @@ import {ApiError} from "../utils/error.util";
 import { ResponseService } from "../services/api/response.service";
 import {UserSpotifyService} from "../services/user.spotify.service";
 import {SpotifyTrackDTO} from "../dtos/spotify.track.dto";
+import {User, UserDTO} from "../models/User";
+import {userInfo} from "node:os";
 
 export class UserController {
     // Dependancy Injection
@@ -16,15 +18,24 @@ export class UserController {
         // Retrieve path parameters
         const userID = (req.params.userID == "me" ? req.user?.id : req.params.userID) ?? "";
         // Get user
-        const user = this.userService.getUserDTOById(userID);
+        const user = this.userService.getUserByIDOrExplode(userID);
         if (!user) { throw new ApiError(404, "User not found."); }
-        ResponseService.handleSuccessResponse(res, user)
+
+        const data = userID == req.user?.id ?
+            await this.userSpotifyService.getUserWithSpotifyData(user, true) :
+            await this.userSpotifyService.getUserWithSpotifyData(user);
+        ResponseService.handleSuccessResponse(res, data)
     }
     public getUsersData = async (req: Request, res: Response, next: NextFunction) => {
         // Get users
-        const users = this.userService.getUsersDTO();
-        if (!users) { throw new ApiError(404, "User not found."); }
-        ResponseService.handleSuccessResponse(res, users)
+        const users = this.userService.getUsers();
+
+        let result: object[] = await Promise.all(users.map(async (user: User) => {
+            const show_playback_state = user.Id == req.user?.id;
+            return await this.userSpotifyService.getUserWithSpotifyData(user, show_playback_state);
+        }));
+
+        ResponseService.handleSuccessResponse(res, result)
     }
 
     public getSpotifyUserProfile = async (req: Request, res: Response, next: NextFunction) => {
@@ -115,8 +126,7 @@ export class UserController {
             }
             result = await this.userSpotifyService.createPlaylistFromUser(user, source_user, name, description)
 
-        // Playlist vide ou à partir d'uris
-        // TODO : à partir d'URI
+        // Playlist vide
         } else {
             result = await this.userSpotifyService.createUserPlaylist(user, name, description)
         }
@@ -131,36 +141,5 @@ export class UserController {
         const playlistID = req.params.playlistID;
         const response = await this.userSpotifyService.addToUserPlaylist(user, playlistID, uris)
         ResponseService.handleSuccessResponse(res, response, 201)
-    }
-
-    public emptyUserSavedTracks = async (req: Request, res: Response, next: NextFunction) => {
-        const userID = (req.params.userID == "me" ? req.user?.id : req.params.userID) ?? "";
-
-        const user = this.userService.getUserByIDOrExplode(userID);
-
-        if (req.user?.id != user.Id) {
-            throw new ApiError(403, "A user can only modify their own saved tracks.")
-        }
-
-        const from_end:boolean = (req.query.from_end?.toString() ?? '').toLowerCase() == "true";
-        let amount:number = parseInt(req.query.amount?.toString()??"");
-        if (!amount || amount < 1) { amount = 5; }
-
-        let ids:string[] = [];
-        let tracks:SpotifyTrackDTO[] = [];
-        if (!from_end) {
-            tracks = await this.userSpotifyService.requestSavedTracks(user, 0, amount)
-        } else {
-            tracks = await this.userSpotifyService.getAllSavedTracks(user);
-            if (tracks.length > amount) {
-                tracks = tracks.slice(-amount);
-            }
-        }
-
-        ids = tracks.map((track:SpotifyTrackDTO) => track.id);
-        await this.userSpotifyService.removeFromUserSavedTracks(user, ids);
-        ResponseService.handleSuccessResponse(res, {
-            message: `Deleted ${amount} tracks from user ${user.Username}'s saved tracks.`
-        }, 200)
     }
 }

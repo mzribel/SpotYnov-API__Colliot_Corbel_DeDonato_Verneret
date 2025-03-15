@@ -1,7 +1,7 @@
 import log from '../logger';
 import { SpotifyAuthService } from "./spotify/spotify.auth.service";
 import { UserService } from "./user.service";
-import User from "../models/User";
+import User, {UserDTO, UsersData} from "../models/User";
 import { ApiError } from "../utils/error.util";
 import { SpotifyApiService } from "./spotify/spotify.api.service";
 import { AxiosError } from "axios";
@@ -71,13 +71,20 @@ export class UserSpotifyService {
         return user_data;
     }
 
-    async getUserWithSpotifyProfile(user:User) {
-        const spotify_profile = this.getUserSpotifyProfile(user).catch(()=>{return null});
-        return {
-            ...user,
-            spotify: {
+    async getUserWithSpotifyData(user:User, show_playback_state:boolean=false) {
+        const spotify_profile = await this.getUserSpotifyProfile(user).catch(()=>{return null});
+        let spotify:object|undefined = undefined;
+        if (spotify_profile) {
+            let playback_state = show_playback_state ?  await this.getUserSpotifyCurrentlyPlayingTrack(user).catch(()=>{return null}) : undefined;
+            spotify = {
                 profile: spotify_profile,
+                playback_state: playback_state
             }
+        }
+
+        return {
+            ...user.toDTO(),
+            spotify
         }
     }
 
@@ -166,7 +173,8 @@ export class UserSpotifyService {
             let current_user:User|null = this.userService.getUserById(member.Id);
             if (!current_user) { continue; }
 
-            uris = [...uris, ...(await this.requestTopTracks(current_user, limit)).map((obj:SpotifyTrackDTO):string => obj.uri)]
+            let user_uris:string[] = (await this.requestTopTracks(current_user, limit).catch(():[] => { return [] })).map((obj:SpotifyTrackDTO):string => obj.uri)
+            uris = [...uris, ...user_uris]
         }
         if (!uris.length) { throw new ApiError(400, "No tracks found."); }
 

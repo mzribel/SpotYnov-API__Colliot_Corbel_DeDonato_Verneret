@@ -40,5 +40,5 @@ router.post("/:groupID/members", authenticateUser, groupController.addGroupMembe
 router.delete("/:groupID/members/:userID", authenticateUser, groupController.deleteGroupMember);
 
 router.get("/:groupID/spotify/synchronize", authenticateUser, groupController.synchronizePlayers);
-router.get("/:groupID/spotify/top-tracks", authenticateUser, groupController.getMembersTopTracks)
+router.get("/:groupID/spotify/top_tracks", authenticateUser, groupController.getMembersTopTracks)
 export default router;

@@ -8,7 +8,7 @@
   ],
   "info": {
     "description": "Théo Colliot-Martinez, Marianne Corbel, Tony de Donato & Nils Verneret, B3 INFO DEV ♪",
-    "version": "1.1.0",
+    "version": "2.1.0",
     "title": "TP3 - SpotYnov API"
   },
   "tags": [
@@ -25,16 +25,8 @@
       "description": "Endpoints related to users"
     },
     {
-      "name": "Users - Spotify",
-      "description": "Endpoints related to users, accessing Spotify API"
-    },
-    {
       "name": "Groups",
       "description": "Endpoints related to user groups"
-    },
-    {
-      "name": "Groups - Spotify",
-      "description": "Endpoints related to groups, accessing Spotify API"
     }
   ],
   "paths": {
@@ -276,6 +268,7 @@
           {
             "in": "path",
             "name": "userID",
+            "example": "me",
             "schema": {
               "type": "string"
             },
@@ -314,6 +307,7 @@
           {
             "in": "path",
             "name": "userID",
+            "example": "me",
             "schema": {
               "type": "string"
             },
@@ -339,7 +333,7 @@
           }
         },
         "tags": [
-          "Users - Spotify"
+          "Users"
         ],
         "security": [
           {
@@ -356,6 +350,7 @@
           {
             "in": "path",
             "name": "userID",
+            "example": "me",
             "schema": {
               "type": "string"
             },
@@ -384,7 +379,7 @@
           }
         },
         "tags": [
-          "Users - Spotify"
+          "Users"
         ],
         "security": [
           {
@@ -401,6 +396,7 @@
           {
             "in": "path",
             "name": "userID",
+            "example": "me",
             "schema": {
               "type": "string"
             },
@@ -453,7 +449,7 @@
           }
         },
         "tags": [
-          "Users - Spotify"
+          "Users"
         ],
         "security": [
           {
@@ -469,6 +465,7 @@
           {
             "in": "path",
             "name": "userID",
+            "example": "me",
             "schema": {
               "type": "string"
             },
@@ -494,7 +491,7 @@
           }
         },
         "tags": [
-          "Users - Spotify"
+          "Users"
         ],
         "security": [
           {
@@ -510,6 +507,7 @@
           {
             "in": "path",
             "name": "userID",
+            "example": "me",
             "schema": {
               "type": "string"
             },
@@ -535,7 +533,7 @@
           }
         },
         "tags": [
-          "Users - Spotify"
+          "Users"
         ],
         "security": [
           {
@@ -551,6 +549,7 @@
           {
             "in": "path",
             "name": "userID",
+            "example": "me",
             "schema": {
               "type": "string"
             },
@@ -576,7 +575,7 @@
           }
         },
         "tags": [
-          "Users - Spotify"
+          "Users"
         ],
         "security": [
           {
@@ -593,11 +592,24 @@
           {
             "in": "path",
             "name": "userID",
+            "example": "me",
             "schema": {
               "type": "string"
             },
             "required": true,
             "description": "ID of the user"
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "user",
+                "group"
+              ]
+            },
+            "description": "To create a playlist from a user or a group"
           }
         ],
         "requestBody": {
@@ -611,12 +623,20 @@
                   "name": {
                     "description": "Name of the playlist (optional)",
                     "type": "string",
-                    "example": "A super empty playlist !"
+                    "example": "A very cool playlist"
                   },
                   "description": {
                     "description": "Description of the playlist (optional)",
                     "type": "string",
-                    "example": "A super description for an empty playlist !"
+                    "example": "A super description !"
+                  },
+                  "user_id": {
+                    "description": "If from=user, ID of the user to create the playlist from. If empty, will target authenticated user's ID",
+                    "type": "string"
+                  },
+                  "group_id": {
+                    "description": "If from=group, ID of the group to create the playlist from. If empty, will target authenticated user's group ID",
+                    "type": "string"
                   }
                 }
               }
@@ -644,7 +664,7 @@
           }
         },
         "tags": [
-          "Users - Spotify"
+          "Users"
         ],
         "security": [
           {
@@ -661,6 +681,7 @@
           {
             "in": "path",
             "name": "userID",
+            "example": "me",
             "schema": {
               "type": "string"
             },
@@ -725,7 +746,7 @@
           }
         },
         "tags": [
-          "Users - Spotify"
+          "Users"
         ],
         "security": [
           {
@@ -770,7 +791,7 @@
                   "groupname": {
                     "type": "string",
                     "description": "Name of the new group",
-                    "example": "Ratio Tony <3"
+                    "example": "A very cool group"
                   }
                 }
               }
@@ -783,6 +804,33 @@
           },
           "401": {
             "description": "Unauthorized (not authenticated)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/me/group": {
+      "get": {
+        "summary": "Retrieves the group of the currently authenticated user -- equivalent to GET /groups/{groupID}",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "404": {
+            "description": "Not found (group doesn't exist)"
           },
           "429": {
             "description": "Too many requests"
@@ -876,6 +924,42 @@
       }
     },
     "/groups/{groupID}/members": {
+      "get": {
+        "summary": "Retrieves group members",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID of the group"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request (group doesn't exist)"
+          },
+          "401": {
+            "description": "Unauthorized (not authenticated)"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "tags": [
+          "Groups"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
       "post": {
         "summary": "Adds a new member to a group",
         "parameters": [
@@ -933,7 +1017,9 @@
             "bearerAuth": []
           }
         ]
-      },
+      }
+    },
+    "/groups/{groupID}/members/{userID}": {
       "delete": {
         "summary": "Removes a member from a group",
         "parameters": [
@@ -947,7 +1033,7 @@
             "description": "ID of the group"
           },
           {
-            "in": "query",
+            "in": "path",
             "name": "userID",
             "schema": {
               "type": "string"
@@ -1018,7 +1104,7 @@
           }
         },
         "tags": [
-          "Groups - Spotify"
+          "Groups"
         ],
         "security": [
           {
@@ -1027,7 +1113,7 @@
         ]
       }
     },
-    "/groups/{groupID}/spotify/top-tracks": {
+    "/groups/{groupID}/spotify/top_tracks": {
       "get": {
         "summary": "Retrieves the top tracks of all the group members",
         "parameters": [
@@ -1059,71 +1145,7 @@
           }
         },
         "tags": [
-          "Groups - Spotify"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/groups/{groupID}/spotify/playlists/from-top-tracks": {
-      "post": {
-        "summary": "Creates a playlist made of a number of a group's members top tracks, on the Spotify account of the authenticated user",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "groupID",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "ID of the group"
-          }
-        ],
-        "requestBody": {
-          "description": "Name and description of the Spotify playlist to be created",
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "playlist_name": {
-                    "description": "Name of the playlist (optional)",
-                    "type": "string",
-                    "example": "A super group playlist !"
-                  },
-                  "playlist_description": {
-                    "description": "Description of the playlist (optional)",
-                    "type": "string",
-                    "example": "What the fuck"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad request (group/user doesn't exist or no Spotify Account linked)"
-          },
-          "401": {
-            "description": "Unauthorized (not authenticated)"
-          },
-          "403": {
-            "description": "Fordidden (only a group member can access this resource)"
-          },
-          "429": {
-            "description": "Too many requests"
-          }
-        },
-        "tags": [
-          "Groups - Spotify"
+          "Groups"
         ],
         "security": [
           {
