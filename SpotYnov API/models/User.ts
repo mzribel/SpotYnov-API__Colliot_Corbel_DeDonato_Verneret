@@ -110,10 +110,19 @@ export class User {
 export class UserDTO {
     public id:string
     public username:string
+    public spotify?: {
+        profile?: any,
+        playback_state?:any
+    }
 
-    public constructor(id:string,username:string) {
+    public constructor(id:string,username:string, spotify_profile?:any, spotify_playback_state?:any) {
         this.id = id;
         this.username = username;
+        if (!spotify_profile) { return; }
+        this.spotify = {
+            profile: spotify_profile,
+            playback_state: spotify_playback_state
+        }
     }
 }
 

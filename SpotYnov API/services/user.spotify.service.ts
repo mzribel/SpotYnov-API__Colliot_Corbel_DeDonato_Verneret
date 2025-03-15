@@ -1,7 +1,7 @@
 import log from '../logger';
 import { SpotifyAuthService } from "./spotify/spotify.auth.service";
 import { UserService } from "./user.service";
-import User from "../models/User";
+import User, {UserDTO, UsersData} from "../models/User";
 import { ApiError } from "../utils/error.util";
 import { SpotifyApiService } from "./spotify/spotify.api.service";
 import { AxiosError } from "axios";
@@ -72,11 +72,23 @@ export class UserSpotifyService {
     }
 
     async getUserWithSpotifyProfile(user:User) {
-        const spotify_profile = this.getUserSpotifyProfile(user).catch(()=>{return null});
+        const spotify_profile = await this.getUserSpotifyProfile(user).catch(()=>{return null});
         return {
-            ...user,
+            ...user.toDTO(),
             spotify: {
                 profile: spotify_profile,
+            }
+        }
+    }
+    async getUserWithSpotifyPlaybackState(user:User) {
+        const spotify_profile = await this.getUserSpotifyProfile(user).catch(()=>{return null});
+        const spotify_playback_state = await this.getUserSpotifyCurrentlyPlayingTrack(user).catch(()=>{return null});
+
+        return {
+            ...user.toDTO(),
+            spotify: {
+                profile: spotify_profile,
+                playback_state:spotify_playback_state
             }
         }
     }

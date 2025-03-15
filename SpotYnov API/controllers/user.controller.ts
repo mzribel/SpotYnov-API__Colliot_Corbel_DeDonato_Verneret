@@ -4,6 +4,7 @@ import {ApiError} from "../utils/error.util";
 import { ResponseService } from "../services/api/response.service";
 import {UserSpotifyService} from "../services/user.spotify.service";
 import {SpotifyTrackDTO} from "../dtos/spotify.track.dto";
+import {User, UserDTO} from "../models/User";
 
 export class UserController {
     // Dependancy Injection
@@ -16,15 +17,27 @@ export class UserController {
         // Retrieve path parameters
         const userID = (req.params.userID == "me" ? req.user?.id : req.params.userID) ?? "";
         // Get user
-        const user = this.userService.getUserDTOById(userID);
+        const user = this.userService.getUserByIDOrExplode(userID);
         if (!user) { throw new ApiError(404, "User not found."); }
-        ResponseService.handleSuccessResponse(res, user)
+
+        const data = userID == req.user?.id ?
+            await this.userSpotifyService.getUserWithSpotifyPlaybackState(user) :
+            await this.userSpotifyService.getUserWithSpotifyProfile(user);
+        ResponseService.handleSuccessResponse(res, data)
     }
     public getUsersData = async (req: Request, res: Response, next: NextFunction) => {
         // Get users
-        const users = this.userService.getUsersDTO();
-        if (!users) { throw new ApiError(404, "User not found."); }
-        ResponseService.handleSuccessResponse(res, users)
+        const users = this.userService.getUsers();
+
+        let result: object[] = await Promise.all(users.map(async (user: User) => {
+            if (user.Id == req.user?.id) {
+                return await this.userSpotifyService.getUserWithSpotifyPlaybackState(user);
+            } else {
+                return await this.userSpotifyService.getUserWithSpotifyProfile(user);
+            }
+        }));
+
+        ResponseService.handleSuccessResponse(res, result)
     }
 
     public getSpotifyUserProfile = async (req: Request, res: Response, next: NextFunction) => {
@@ -115,8 +128,7 @@ export class UserController {
             }
             result = await this.userSpotifyService.createPlaylistFromUser(user, source_user, name, description)
 
-        // Playlist vide ou à partir d'uris
-        // TODO : à partir d'URI
+        // Playlist vide
         } else {
             result = await this.userSpotifyService.createUserPlaylist(user, name, description)
         }
