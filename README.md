@@ -37,7 +37,7 @@ git clone https://github.com/mzribel/SpotYnov-API__Colliot_Corbel_DeDonato_Verne
 
 Le projet contient deux parties : 
 - `/SpotYnov_API` : L'API elle-même
-- `SpotYnov_APP` : Le site web facultatif
+- `/SpotYnov_APP` : Le site web facultatif
   
 Dans les deux cas, les modules nodes doivent être installés dans chacun des deux dossiers avec la commande `npm i`.
 
