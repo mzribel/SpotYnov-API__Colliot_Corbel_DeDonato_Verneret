@@ -3,7 +3,8 @@
 Rendu du TP 3 du cours de développement back-end par **Théo Colliot--Martinez**, **Marianne Corbel**, **Tony De Donato** et **Nils Verneret**.
 
 Les commits réalisés après le 15/03 ne concerneront aucune fonctionnalité obligatoire, celles-ci ayant toutes été réalisées dans les temps (gestion de projet et noms des commits).
-Si cela ets dérangeant, il est toujours possible de récupérer la dernière version avant le rendu (commit **00de6f8815613cae0ed15ae26855edb4c42b302a**).
+Si cela ets dérangeant, il est toujours possible de récupérer la dernière version avant le rendu :
+- commit **00de6f8815613cae0ed15ae26855edb4c42b302a**
 
 ## Prérequis 
 
