@@ -20,8 +20,8 @@ export class GroupController {
         else { group = this.groupService.getGroupByID(req.params.groupID ?? "");}
         if (!group) { throw new ApiError(404, "Group not found.") }
 
-        const show_members:boolean = group.memberExists(req.user?.id ?? "");
-        const groupDTO = await this.groupSpotifyService.getGroupWithSpotifyData(group, show_members);
+        const show_playback_state:boolean = group.memberExists(req.user?.id ?? "");
+        const groupDTO = await this.groupSpotifyService.getGroupWithSpotifyData(group, show_playback_state);
         ResponseService.handleSuccessResponse(res, groupDTO)
     }
     public getGroupsData = async (req: Request, res: Response, next: NextFunction) => {
@@ -30,7 +30,7 @@ export class GroupController {
         const groupsDTO:GroupDTO[] = await Promise.all(groups.map(async (group: Group) => {
             const show_members: boolean = group.memberExists(req.user?.id ?? "");
             return await this.groupSpotifyService.getGroupWithSpotifyData(group, show_members);
-        }));
+        }))
         ResponseService.handleSuccessResponse(res, groupsDTO)
     }
     public createOrJoinGroup = async (req: Request, res: Response, next: NextFunction) => {
@@ -130,11 +130,8 @@ export class GroupController {
         else { group = this.groupService.getGroupByID(req.params.groupID ?? "");}
         if (!group) { throw new ApiError(404, "Group not found.") }
 
-        if (!group.memberExists(req.user?.id ?? "")) {
-            throw new ApiError(403, "User is not a member of the group.")
-        }
-
-        const members = await this.groupSpotifyService.getGroupMembersWithSpotifyData(group);
+        const show_player_state = group.memberExists(req.user?.id ?? "")
+        const members = await this.groupSpotifyService.getGroupMembersWithSpotifyData(group, show_player_state);
         ResponseService.handleSuccessResponse(res, members, 200)
     }
 }

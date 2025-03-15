@@ -24,9 +24,8 @@ export class GroupSpotifyService {
 
         const users = this.groupService.getGroupUsers(group);
         groupDTO.members = await Promise.all(users.map(async (user: User) => {
-            return show_playback_state ?
-                await this.userSpotifyService.getUserWithSpotifyPlaybackState(user) :
-                await this.userSpotifyService.getUserWithSpotifyProfile(user);
+
+            return await this.userSpotifyService.getUserWithSpotifyData(user, show_playback_state);
         }));
 
         return groupDTO;
@@ -41,7 +40,6 @@ export class GroupSpotifyService {
                     userSavedTracks.push(...savedTracks) })
                 .catch((err:Error) => {
                     console.log("Couldn't fetch saved tracks for user "+user.Username);
-                    console.log(err)
                 })
         }
         return userSavedTracks;
@@ -51,9 +49,7 @@ export class GroupSpotifyService {
         const users:User[] = this.groupService.getGroupUsers(group);
         let members:object[] = [];
         for (const user of users) {
-            const data = show_playback_state ?
-                await this.userSpotifyService.getUserWithSpotifyPlaybackState(user) :
-                await this.userSpotifyService.getUserWithSpotifyProfile(user);
+            const data = await this.userSpotifyService.getUserWithSpotifyData(user, show_playback_state);
             members.push({
                 ...data,
                 isAdmin: group.getAdminID == user.Id
