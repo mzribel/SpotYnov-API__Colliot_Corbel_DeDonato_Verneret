@@ -14,7 +14,7 @@ Une fois créée, l'utilisateur pourra y récupérer son `client ID` et son `cli
 
 ### API
 
-L'API présentée a été réalisée à l'aide d'**ExpressJS**.
+L'API présentée a été réalisée à l'aide d'**ExpressJS + TypeScript**.
 
 **Versions** :
 - npm 10.9
@@ -25,7 +25,7 @@ Client API recommandé : **Postman**
 ### IHM
 
 L'IHM a été réalisée avec les technologies suivantes :
-- VueJS 3
+- **VueJS 3 + TypeScript**
 - Pinia (stores)
 
 ## Installation
