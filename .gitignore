@@ -5,3 +5,5 @@
 */node_modules
 app.log
 *.js
+
+/SpotYnov API/data/
