@@ -26,6 +26,8 @@ import router from "../router.ts";
   background: #000000;
   color: white;
   border-right: 3px solid #1f1f1f;
+  border-bottom: 3px solid #1f1f1f;
+  border-bottom-right-radius: 10px;
 }
 
 .nav-links{

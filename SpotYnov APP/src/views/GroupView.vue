@@ -1,4 +1,5 @@
 <template>
+
   <navbar/>
   <div class="group-view flex flex-row">
     <side-bar/>
@@ -7,6 +8,7 @@
       <GroupMembers />
       <GroupPlaylists />
     </div>
+    <ErrorPopup />
   </div>
 </template>
 
@@ -15,6 +17,7 @@ import GroupMembers from "../components/GroupMembers.vue";
 import GroupPlaylists from "../components/GroupPlaylists.vue";
 import Navbar from "../components/Navbar.vue";
 import SideBar from "../components/SideBar.vue";
+import ErrorPopup from "../components/ErrorPopup.vue";
 </script>
 
 <style scoped>

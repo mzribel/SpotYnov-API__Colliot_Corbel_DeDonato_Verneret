@@ -1,3 +1,4 @@
+// @ts-nocheck
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useUserStore } from '../stores/users';
@@ -27,13 +28,9 @@ onMounted(() => {
       <h1>Durée moyenne : </h1>
       <p>{{ userStore.userPersonality.avg_duration }} min</p>
     </div>
-    <div class="user-spotify-profil-line">
-      <h1>Titres ♥ : </h1>
-      <p>{{ userStore.userPersonality.count }} aimés</p>
-    </div>
     <div class="w-full">
-      <h1>Popularity:  </h1>
-      <div style="height: 20px; width: 100%; background: #1f1f1f; border-radius: 10px; margin-top: 5px;">
+      <h1>Popularité moyenne : </h1>
+      <div style="height: 20px; width: 100%; background: #1f1f1f; border-radius: 10px; margin-top: 5px; color: white">
         <div :style="{borderRadius:`10px`, backgroundColor: `rgb(${255 - userStore.userPersonality.avg_popularity * 2.55}, ${userStore.userPersonality.avg_popularity * 2.55}, 0)`, height: '100%', width: userStore.userPersonality.avg_popularity + '%', display: 'flex', justifyContent: 'center', alignItems: 'center'}">
           <p>{{ userStore.userPersonality.avg_popularity }}</p>
         </div>
@@ -50,9 +47,9 @@ onMounted(() => {
   align-items: start;
   min-width: fit-content;
   gap: 5px;
-  padding: 10px;
+  padding: 15px;
   background: rgba(0, 0, 0, 0);
-  color: white;
+  color: #b0b0b0;
   border-left: 3px solid #1f1f1f;
   border-bottom: 3px solid #1f1f1f;
   border-bottom-left-radius: 10px;
@@ -60,8 +57,8 @@ onMounted(() => {
 
 h1 {
   font-weight: bold;
-  color: #c9c9c9;
 }
+
 .user-spotify-profil-line {
   display: flex;
   flex-direction: row;

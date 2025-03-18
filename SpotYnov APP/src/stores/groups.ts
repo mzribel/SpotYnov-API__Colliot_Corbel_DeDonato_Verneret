@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useAuthStore } from './auth';
+import {useNotificationStore} from "./notification.ts";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 export const useGroupStore = defineStore('group', () => {
     const authStore = useAuthStore();
+    const notificationStore = useNotificationStore();
     const groups = ref([]);
     const currentGroup = ref(null);
     const groupDetail = ref(null);
@@ -92,14 +94,20 @@ export const useGroupStore = defineStore('group', () => {
 
     const joinGroup = async (id: string) => {
         try {
-            await fetch(`${apiUrl}/groups/${id}/join`, {
+            const response = await fetch(`${apiUrl}/groups/${id}/member`, {
                 method: 'POST',
                 headers: {
-
-                }
+                    'Authorization': `Bearer ${authStore.token}`,
+                },
+                body: "{ 'user_id': 'me' }",
             });
-        } catch (error) {
-            console.error('Erreur lors de la suppression du groupe', error);
+            if (response.ok) {
+                fetchGroups();
+            } else {
+                throw await response.json()
+            }
+        } catch (error: any) {
+            notificationStore.addNotification(error.error.message);
         }
     }
 

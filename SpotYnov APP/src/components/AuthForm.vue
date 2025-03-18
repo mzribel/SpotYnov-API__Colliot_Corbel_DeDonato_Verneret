@@ -21,12 +21,11 @@ const submitForm = async () => {
     const response = await fetch(`${apiUrl}${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: username.value, password: "Ex@mpl3P@ssw0rd"}), // TODO: replace with password.value
+      body: JSON.stringify({ username: username.value, password: password.value}),
     });
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data.data);
       const token = data.data.access_token;
       if (token) {
         authStore.login(token, username.value);
