@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useRoute } from 'vue-router';
-import * as process from "process";
 
 const authStore = useAuthStore();
 const route = useRoute();

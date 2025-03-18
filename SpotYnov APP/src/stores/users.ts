@@ -58,7 +58,6 @@ export const useUserStore = defineStore('user', () => {
             });
             const data = await response.json();
             userDetail.value = data.data;
-            console.log(userDetail.value);
         } catch (error) {
             console.error('Erreur lors de la récupération de l\'utilisateur', error);
         }

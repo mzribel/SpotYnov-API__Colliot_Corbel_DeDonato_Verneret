@@ -10,6 +10,7 @@
       </div>
     </div>
     <UserProfile/>
+    <ErrorPopup />
   </div>
 </template>
 
@@ -33,4 +34,5 @@ import UsersList from "../components/UsersList.vue";
 import SideBar from "../components/SideBar.vue";
 import UserProfile from "../components/UserProfile.vue";
 import CurrentGroup from "../components/CurrentGroup.vue";
+import ErrorPopup from "../components/ErrorPopup.vue";
 </script>
