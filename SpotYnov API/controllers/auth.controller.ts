@@ -18,7 +18,7 @@ export class AuthController {
 
         let response = {
             "message": `User ${newUser.Username} has successfully been registered.`,
-            "access_token": generateAccessToken(newUser.Username, newUser.Id)
+            "token": generateAccessToken(newUser.Username, newUser.Id)
         }
         ResponseService.handleSuccessResponse(res, response, 201)
     }
@@ -38,8 +38,7 @@ export class AuthController {
 
         let response = {
             "message": `User ${user.Username} has successfully been logged in.`,
-            // TODO : access_token plus précis
-            "access_token": generateAccessToken(user.Username, user.Id)
+            "token": generateAccessToken(user.Username, user.Id)
         }
 
         ResponseService.handleSuccessResponse(res, response, 200)
